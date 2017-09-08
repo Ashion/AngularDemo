@@ -1,0 +1,213 @@
+<div style="width:100%; height:500px; padding:60px 88px 94px 193px;">
+    <div class="manage-vehicle-section-title">
+        <h3>Manage vehicle</h3>
+    </div>
+    <div class="manage-vehicle-section">
+
+        <div class="tabs-row">
+            <a [ngClass]="tabName==_tabs.vehicle_details?'active':''" [routerLink]="'/user/fleet/manage-vehicle/' + _tabs.vehicle_details + '/' + vehicleId">Vehicle Details</a>
+            <a [ngClass]="tabName==_tabs.odometer_calibration?'active':''" [routerLink]="'/user/fleet/manage-vehicle/' + _tabs.odometer_calibration + '/' + vehicleId">Odometer Calibration</a>
+            <a [ngClass]="tabName==_tabs.status?'active':''" [routerLink]="'/user/fleet/manage-vehicle/' + _tabs.status + '/' + vehicleId">Status</a>
+        </div>
+
+        <div *ngIf="tabName==_tabs.vehicle_details">
+
+
+            <div *ngIf="loadingContent">
+                Loading...
+            </div>
+
+            <form *ngIf="!loadingContent" name="form" (ngSubmit)="vehicleForm.form.valid && saveVehicleDetails()" #vehicleForm="ngForm"
+                novalidate>
+
+                <div class="form-group labels">
+                    <label class="control-label">Labels</label>
+
+                    <div class="color-palette">
+                        <div *ngFor="let lbl of model.VehicleLabels">
+                            <div *ngIf="!lbl.IsDeleted" class="pill" [ngStyle]="{'background-color': lbl.ColorCode}">
+                                {{lbl.Name}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="button" class="btn btn-default" value="Add Labels" [popover]="myPopover" />
+                    <popover-content #myPopover title="" placement="bottom" [animation]="true" [closeOnClickOutside]="true" (onShown)="loadLabelPopover=true">
+                        <div *ngIf="loadLabelPopover">
+                            <vehicle-label [vehicleId]="vehicleId" [labelList]="model.VehicleLabels" (onSaveLabel)="onSaveLabel($event)"></vehicle-label>
+                        </div>
+                    </popover-content>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" [ngClass]="_err.label(vehicleForm, VehicleName)">Vehicle Name <span class="err-label">*</span></label>
+                    <div class="fa-input">
+                        <input type="text" class="form-control" name="VehicleName" required maxlength="1000" [ngStyle]="_valDuplicateInputStyle(isDuplicateName)"
+                            (blur)="verifyVehicleName($event)" [(ngModel)]="model.Name" #VehicleName="ngModel" [ngClass]="_err.input(vehicleForm, VehicleName)"
+                        />
+                        <span *ngIf="isDuplicateName==false"><i class="fa fa-check item-available"></i></span>
+                        <span *ngIf="isDuplicateName==true"><i class="fa fa-times item-not-available"></i></span>
+                        <label *ngIf="_err.required(vehicleForm, VehicleName)" class="err-label">Please enter Vehicle Name</label>
+                        <label *ngIf="_err.duplicate(vehicleForm, VehicleName, isDuplicateName)" class="err-label">Vehicle Name already in use</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" [ngClass]="_err.label(vehicleForm, DeviceId)">Device Id <span class="err-label">*</span></label>
+                    <div class="fa-input">
+                        <kendo-autocomplete name="DeviceId" class="form-control p0" [data]="deviceList" [filterable]="true" [(ngModel)]="model.IMEI"
+                            #DeviceId="ngModel" [valueField]="'Name'" (focusout)="onDeviceFocusOut()" (filterChange)="onDeviceFilter($event)"
+                            [ngClass]="_err.input(vehicleForm, DeviceId)" required></kendo-autocomplete>
+                        <label *ngIf="_err.required(vehicleForm, DeviceId)" class="err-label">Please enter Device Id</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" [ngClass]="_err.label(vehicleForm, Registration)">Registration <span class="err-label">*</span></label>
+                    <div class="fa-input">
+                        <input class="form-control" name="Registration" [(ngModel)]="model.Rego" #Registration="ngModel" maxlength="50 " [ngClass]="_err.input(vehicleForm, Registration)"
+                            required/>
+                        <label *ngIf="_err.required(vehicleForm, Registration)" class="err-label">Please enter Registration</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label" [ngClass]="_err.label(vehicleForm, DefaultDriver)">Default Driver</label>
+                    <div class="fa-input">
+                        <kendo-dropdownlist class="form-control " [data]="driverList" [textField]="'Name'" [valueField]="'Id'" [defaultItem]="defaultDriverItem"
+                            name="DefaultDriver" [(value)]="model.DefaultDriverId" [valuePrimitive]="true" #DefaultDriver>
+                        </kendo-dropdownlist>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <b class="control-label">Vehicle Trip Type switch</b>
+                    <div class="fa-input">
+                        <input type="radio" name="IsTripTypeSwitched" id="tt1" value="true" (change)="onTriptypeSwitchChange($event)" [checked]="model.IsTripTypeSwitched">
+                        <label for="tt1">Enabled</label>
+                        <input type="radio" name="IsTripTypeSwitched" id="tt0" value="false" (change)="onTriptypeSwitchChange($event)" [checked]="!model.IsTripTypeSwitched">
+                        <label for="tt0">Disabled</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <b class="control-label">Default Trip Type</b>
+                    <div class="fa-input">
+                        <input type="radio" name="TripType" id="privateTrip" [value]="true" (change)="onTriptypeChange($event)" [checked]="model.IsPrivateTrip">
+                        <label for="privateTrip">Private</label>
+                        <input type="radio" name="TripType" id="businessTrip" [value]="false" (change)="onTriptypeChange($event)" [checked]="!model.IsPrivateTrip">
+                        <label for="businessTrip">Business</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <b class="control-label"></b>
+                    <div class="fa-input">
+                        <input type="submit" class="btn btn-default btn-big btn-orange" value="Save Changes" [disabled]="loadingSave" />
+                    </div>
+                </div>
+
+                <div class="restart-device-main">
+                    <div class="restart-device">
+                        <h3>Restart device</h3>
+                        <p>Use this button if you're experiencing a unusual vehicle behavior</p>
+
+                        <input type="button" class="btn btn-default btn-orange" value="Restart" />
+                    </div>
+                </div>
+
+
+            </form>
+
+        </div>
+
+        <div *ngIf="tabName==_tabs.odometer_calibration">
+
+            <div *ngIf="loadingContent">
+                Loading...
+            </div>
+            <div class="odometer-section">
+                <div *ngIf="!loadingContent">
+                    <p>Vehicle and GPS information about distances may differ. We recommend to add odometer readings at least
+                        once a month to keep them in sync.</p>
+                    <form name="form" (ngSubmit)="odometerForm.form.valid && saveCurrentOdometer()" #odometerForm="ngForm" novalidate>
+                        <div class="form-group">
+                            <label class="control-label" [ngClass]="_err.label(odometerForm, Odometer)">Current Odometer Value <span class="err-label">*</span></label>
+                            <div class="relative-div">
+                                <kendo-numerictextbox type="number" class="mr5" name="Odometer" [(ngModel)]="currentOdometer" #Odometer="ngModel" maxlength="20"
+                                    [format]="'0 km'" [ngClass]="_err.input(odometerForm, Odometer)" required>
+                                </kendo-numerictextbox>
+                                <br/>
+                                <label *ngIf="_err.required(odometerForm, Odometer)" class="err-label">Please enter Current Odometer Value</label>
+                            </div>
+                            <input type="submit" class="btn btn-default btn-orange" value="Save" [disabled]="loadingSave" />
+                        </div>
+                    </form>
+
+                    <br />
+
+                    <kendo-grid [data]="kgDataSource | async" [pageSize]="kgPageSize" (pageChange)="pageChange($event)" [skip]="kgSkip" [pageable]="true"
+                        [sort]="kgSort" [sortable]="{allowUnsort: true,mode: 'multiple'}" (dataStateChange)="onStateChange($event)"
+                        (sortChange)="sortChange($event)">
+
+                        <kendo-grid-column title="Name" width="190px">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                {{dataItem.DateUTC | dtToTimezone:dataItem.TimezoneRegion | date:'dd MMM y, hh:mm a'}}
+                            </ng-template>
+                        </kendo-grid-column>
+
+                        <kendo-grid-column title="Real Odometer Value" width="190px">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                {{dataItem.RealValue}} km
+                            </ng-template>
+                        </kendo-grid-column>
+
+                        <kendo-grid-column title="Current Value" width="190px">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                {{dataItem.CurrentValue}} km
+                            </ng-template>
+                        </kendo-grid-column>
+
+                        <kendo-grid-column title="Variance" width="190px">
+                            <ng-template kendoGridCellTemplate let-dataItem>
+                                {{dataItem.Variance}} km
+                            </ng-template>
+                        </kendo-grid-column>
+
+                    </kendo-grid>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="tabName==_tabs.status">
+
+
+            <div class="status-section">
+                <div *ngIf="loadingContent">
+                    Loading...
+                </div>
+                <div *ngIf="!loadingContent && vehicleStatus">
+
+                    <div class="status-section-round" [ngStyle]="{ 'background':vehicleStatus.AcitvityStatus.ColorCode}"> </div>
+                    <div class="status-section-row">
+                        <h3>{{vehicleStatus.DisplayContent.Status}}</h3>
+                        <h4>{{vehicleStatus.DisplayContent.LastUpdate}}</h4>
+                    </div>
+                    <div class="status-section-row">
+                        <i *ngIf="vehicleStatus.AcitvityStatus.Key == _activityStatus.Moving.Key" class="fa fa-check pull-left" style="color:green;"
+                            aria-hidden="true"></i>
+                        <i *ngIf="vehicleStatus.AcitvityStatus.Key != _activityStatus.Moving.Key" class="fa fa-times pull-left" style="color:red;"
+                            aria-hidden="true"></i>
+                        <h3>{{vehicleStatus.DisplayContent.Frequency}}</h3>
+                        <h4>{{vehicleStatus.DisplayContent.UpdateLocationStatus}}</h4>
+                    </div>
+
+                </div>
+                <div *ngIf="!loadingContent && !vehicleStatus">
+                    <div class="status-section-round" [ngStyle]="{ 'background':_activityStatus.Offline.ColorCode}"> </div>
+                    <div class="status-section-row mb10">
+                        <h3>{{_activityStatus.Offline.Description}}</h3>
+                    </div>
+                </div>
+            </div>
+
+        </div>

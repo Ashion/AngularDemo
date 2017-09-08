@@ -1,0 +1,59 @@
+<div class="content-breadcrumb">
+  <ul class="breadcrumb-box">
+    <li><a href="#">Manage Hardware</a></li>
+    <li><a routerLink="/admin/settings/configuration">Profile</a></li>
+  </ul>
+</div>
+
+<div class="top-button-main">
+  <div class="top-filter pull-left">
+    <form name="form" (ngSubmit)="addFilter()" #f="ngForm" class="form-inline" novalidate>
+      <div class="form-group">
+        <label class="control-label-top">Select Column</label>
+        <kendo-dropdownlist name="ddlFilter" class="form-control" [data]="filterDataSource" [(ngModel)]="model.ddlFilter" #ddlFilter="ngModel"
+          [textField]="'Name'" [valueField]="'Id'"></kendo-dropdownlist>
+      </div>
+      <div class="form-group">
+        <label class="control-label-top">Search</label>
+        <input type="text" name="searchText" class="form-control k-textbox" placeholder="All" [(ngModel)]="model.searchText" #searchText="ngModel"
+        />
+      </div>
+      <button class="btn btn-gray ml5" kendoButton>Add Filter</button>
+    </form>
+  </div>
+  <div class="top-button-right pull-right">
+    <button class="btn btn-orange pull-right ml10" kendoButton [routerLink]="['/admin/settings/configuration/new/tab']">+ Add Profile</button>
+  </div>
+</div>
+
+<div class="grid-main full-width">
+  <div class="grid-filter full-width">
+    <div *ngFor="let item of filterText">
+      <span *ngIf="item.Id!=''">{{item.Id }} : &nbsp;  {{item.Name }}
+            <a (click)="onCancelClick(item.Id)" >x</a></span>
+    </div>
+  </div>
+
+  <div class="grid-box full-width">
+    <kendo-grid [data]="kgDataSource | async" [pageSize]="kgPageSize" (pageChange)="pageChange($event)" [skip]="kgSkip" [pageable]="true"
+      [sort]="kgSort" [sortable]="{
+            allowUnsort: true,
+            mode: 'multiple'
+            }" (dataStateChange)="stateChange($event)" (edit)="editHandler($event)" (remove)="removeHandler($event)" (sortChange)="sortChange($event)">
+      <kendo-grid-command-column title="Action" width="80px">
+        <ng-template kendoGridCellTemplate>
+          <img width="16px" class="k-grid-action-btn" kendoGridEditCommand src="assets/images/edit-icon.png" title="Edit Hardware Profile"
+            alt="Edit" />
+          <img width="12px" class="k-grid-action-btn" kendoGridRemoveCommand src="assets/images/delete-icon.png" title="Delete Hardware Profile"
+            alt="Delete" />
+        </ng-template>
+      </kendo-grid-command-column>
+      <kendo-grid-column field="ProfileName" title="Profile Name"></kendo-grid-column>
+      <kendo-grid-column field="ProtocolName" title="Protocol"></kendo-grid-column>
+      <kendo-grid-column field="PortNumber" title="Port"></kendo-grid-column>
+      <kendo-grid-column field="ParserName" title="Parser"></kendo-grid-column>
+      <kendo-grid-column field="Description" title="Description"></kendo-grid-column>
+
+    </kendo-grid>
+  </div>
+</div>

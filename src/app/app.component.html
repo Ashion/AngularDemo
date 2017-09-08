@@ -1,0 +1,8 @@
+<!--The whole content below can be removed with the new code.-->
+<div *ngIf="appLoad">
+    <router-outlet></router-outlet>
+    <div *ngIf="loading" class="loading-img">
+        <i class="fa fa-refresh fa-spin fa-5x fa-fw" aria-hidden="true"></i>
+    </div>
+    <simple-notifications></simple-notifications>
+</div>

@@ -1,0 +1,37 @@
+<aside class="main-sidebar">
+  <ul class="sidemenu">
+    <li>
+      <a *ngIf="vehicleDetail; else loadingInfo" (click)="openGroupList = !openGroupList" class="hyundai-icon">{{vehicleDetail.Name}}</a>
+      <ng-template #loadingInfo>Loading...</ng-template>
+
+      <div [hidden]="!openGroupList" class="map-widget--search for-fleet">
+        <div class="form-group">
+          <span class="input-group">
+                <input [autofocus]="true" (input)="searchVehicle($event)" placeholder="Search vehicle" style="color:#fff" class="form-control" (keyup)="searchKeyUp($event, refSearchPlace)" #refSearchPlace/>
+                <span class="input-group-btn">
+                  <button type="button" class="btn-reset btn btn-default" (click)="clearFilter(refSearchPlace)"><i class="ion-close-round">X</i></button>
+                </span>
+          </span>
+        </div>
+      </div>
+
+      <!-- <div slimScroll height="100%" size="5px"> -->
+      <kendo-panelbar [hidden]="!openGroupList" id="pnlPlace" class="search-results">
+        <kendo-panelbar-item *ngFor="let grp of clientVehicleListResult" [title]="grp.Name + ' (' + getListCount(clientVehicleList, grp.ClientGroupId) + ')'">
+          <ng-template kendoPanelBarContent>
+            <div *ngIf="getListCount(clientVehicleList, grp.ClientGroupId) > 0">
+              <a *ngFor="let list of getList(clientVehicleList, grp.ClientGroupId)" (click)="onSelectVehicle(list.Id, list.Name)" style="color:#333;">{{list.Name}}</a>
+            </div>
+            <div *ngIf="getListCount(clientVehicleList, grp.ClientGroupId) == 0">
+              <span class="no-vehicle">No vehicle list found</span>
+            </div>
+          </ng-template>
+        </kendo-panelbar-item>
+      </kendo-panelbar>
+      <!-- </div> -->
+
+    </li>
+    <li [hidden]="openGroupList"><a [routerLink]="'/user/fleet/logbook/'+ vehicleId" class="logbook-icon" [ngClass]="isLogbook?'active':''">Logbook</a></li>
+    <li [hidden]="openGroupList"><a [routerLink]="'/user/fleet/manage-vehicle/details/'+ vehicleId" class="manage-vehicle-icon" [ngClass]="!isLogbook?'active':''">Manage vehicle</a></li>
+  </ul>
+</aside>

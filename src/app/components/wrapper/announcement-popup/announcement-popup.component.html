@@ -1,0 +1,14 @@
+<div class="annoncement-box">
+    <div class="datepicker-main">
+        <label class="control-label">Expiry Date</label>
+        <md2-datepicker [(ngModel)]="date" type="datetime" openOnFocus="true"></md2-datepicker>
+    </div>
+    <div class="clearfix"></div>
+    <ckeditor [(ngModel)]="ckeditorContent" [config]="{removeButtons: 'Source,Save,NewPage,Preview,Print,Templates,Cut,Copy,Paste,PasteText,PasteFromWord,Undo,Redo,Find,Replace,SelectAll,Form,Checkbox,Radio,TextField,Textarea,selectfield,Button,ImageButton,HiddenField,CopyFormatting,RemoveFormat,Indent,Outdent,Blockquote,CreateDiv,language,Link,Unlink,Anchor,Image,Flash,Table,Smiley,SpecialChar,Iframe,FormattingStyles,Maximize,ShowBlocks,About,HorizontalRule,SpellChecker'}"
+        debounce="500">
+    </ckeditor>
+    <div class="popup-btn">
+        <button type="button" (click)="saveAnnouncement()" class="btn btn-min-with btn-orange">Save</button>
+        <button type="button" class="btn btn-min-with btn-gray" (click)="cancelClick()">Cancel</button>
+    </div>
+</div>

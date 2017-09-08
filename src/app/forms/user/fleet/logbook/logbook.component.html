@@ -1,0 +1,9 @@
+<logbook-triplist (dateChange)="onDateChange($event)" [rangeFilter]="dateRangeFilter" (applyFilter)="onApplyFilter($event)"></logbook-triplist>
+<div class="map-box-main">
+    <div class="map-box">
+        <div class="map-view">
+            <logbook-mapoverlay *ngIf='mapReady'></logbook-mapoverlay>
+        </div>
+        <logbook-timescalebar></logbook-timescalebar>
+    </div>
+</div>

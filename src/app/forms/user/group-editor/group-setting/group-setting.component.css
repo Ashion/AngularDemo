@@ -1,0 +1,33 @@
+.checkboxes {
+    margin-top: 10px;
+    display: block;
+    min-width: 271px;
+}
+
+ul {
+    padding: 0;
+    margin: 0;
+}
+
+.checkboxes li {
+    float: left;
+    padding: 18px 10px 8px 10px;
+    position: relative;
+    cursor: pointer;
+}
+
+li {
+    list-style-type: none;
+}
+
+.checkboxes label {
+    vertical-align: middle;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 31px;
+    text-align: center;
+    font-weight: normal;
+    cursor: pointer;
+    font-size: 12px;
+}

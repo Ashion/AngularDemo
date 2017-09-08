@@ -1,0 +1,35 @@
+<!-- left section -->
+<aside class="main-sidebar">
+  <ul *ngIf="topMenuSelected=='Settings'" class="sidedetail">
+    <li><a routerLinkActive="main-sidebar-link-active" routerLink="/admin/settings/client">Manage Clients</a></li>
+    <li data-toggle="collapse" data-target="#manageclient">
+      <a href='javascript:void(0)'>Manage Hardware <span class="arrow"></span></a>
+    </li>
+    <ul class="sub-menu collapse" id="manageclient">
+      <li><a routerLinkActive="main-sidebar-link-active" routerLink="/admin/settings/configuration">Profile</a></li>
+      <li><a href='javascript:void(0)'>Assignment</a></li>
+      <li><a routerLinkActive="main-sidebar-link-active" (click)="announcementClick()">Announcement</a></li>
+    </ul>
+    <li><a href='javascript:void(0)'>Manage Map Layer</a></li>
+    <li data-toggle="collapse" data-target="#manageclientreport">
+      <a href='javascript:void(0)'>Manage Client Reports <span class="arrow"></span></a>
+    </li>
+    <ul class="sub-menu collapse" id="manageclientreport">
+      <li><a href='javascript:void(0)'>View Hardware Message</a></li>
+      <li><a href='javascript:void(0)'>View Command Message</a></li>
+    </ul>
+  </ul>
+
+  <ul *ngIf="topMenuSelected=='SiteTools'" class="sidedetail">
+    <li data-toggle="collapse" data-target="#managedeviceinventory">
+      <a href='javascript:void(0)'>Manage Device Inventory <span class="arrow"></span></a>
+    </li>
+    <ul class="sub-menu collapse" id="managedeviceinventory">
+      <li><a routerLink="/admin/tools/device">Device</a></li>
+      <li><a routerLink="/admin/tools/model">Model</a></li>
+      <li><a routerLink="/admin/tools/manufacturer">Manufacturer</a></li>
+    </ul>
+    <li><a routerLinkActive="main-sidebar-link-active" routerLink="/admin/settings/client">Client Type Manager</a></li>
+    <li><a routerLinkActive="main-sidebar-link-active" routerLink="/admin/tools/drivertag">Driver Tag</a></li>
+  </ul>
+</aside>

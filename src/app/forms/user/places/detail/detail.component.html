@@ -1,0 +1,84 @@
+<div class="places-left">
+  <div class="box-height">
+    <div class="places-title full-width"><span>New Places</span> <a (click)="backToPlaces()" class="btn btn-orange pull-right btn-default">Back</a></div>
+
+    <kendo-panelbar id="pnlPlace" [expandMode]="mode">
+      <kendo-panelbar-item [title]="'#1 Draw Circular Place'" [expanded]="drawType == 'circle'" [selected]="drawType == 'circle'"
+        [disabled]="isDrawPlace" (click)="changeDrawType(false)">
+        <ng-template kendoPanelBarContent>
+          Zoom to area and then start by clicking on the map. Finish your place by drawing a few more points. You can press ESC to
+          start again. <br/>
+          <b>Note:</b> It’s recommended to draw a larger area that covers all your parking places.
+        </ng-template>
+      </kendo-panelbar-item>
+      <kendo-panelbar-item [title]="'#1 Draw Polygon Place'" [expanded]="drawType == 'polygon'" [selected]="drawType == 'polygon'"
+        [disabled]="isDrawPlace" (click)="changeDrawType(true)">
+        <ng-template kendoPanelBarContent>
+          Zoom to area and then start by clicking on the map. Finish your place by drawing a few more points. You can press ESC to
+          start again. <br/>
+          <b>Note:</b> It’s recommended to draw a larger area that covers all your parking places.
+        </ng-template>
+      </kendo-panelbar-item>
+      <kendo-panelbar-item [title]="'#2 Add name to your place'" [expanded]="isDrawPlace" [selected]="isDrawPlace" [disabled]="!isDrawPlace">
+        <ng-template kendoPanelBarContent>
+          <div class="add-place">
+
+            <form name='form' novalidate (ngSubmit)="placeForm.form.valid && addPlace()" #placeForm="ngForm" class="add-place">
+              <div *ngIf="!isDrawPolygon" class="form-group">
+                <label class="form-label" for="txtRadius" [ngClass]="((placeForm.submitted || Radius.dirty) && Radius.invalid) || isInvalidRadius ? 'err-title':''">Radius (Meter) <span class="err-label">*</span></label>
+                <input id="txtRadius" type="number" min="1" class="form-control" name='Radius' (input)="changeRadius($event)" [ngModel]="placeModel.Radius | digitDecimal"
+                  (ngModelChange)="placeModel.Radius=$event" #Radius="ngModel" [ngClass]="((placeForm.submitted || Radius.dirty) && Radius.invalid) || isInvalidRadius ? 'err-input':''"
+                  required />
+                <label *ngIf="(placeForm.submitted || Radius.dirty) && Radius.errors && Radius.errors['required']" class="err-label">Please enter Radius</label>
+                <label *ngIf="isInvalidRadius" class="err-label">Please enter valid Radius</label>
+
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="txtArea">Area (Square Meter):</label>
+                <input id="txtArea" type="number" class="form-control" name='Area' [ngModel]="placeModel.SquareMeterArea | digitDecimal"
+                  (ngModelChange)="placeModel.SquareMeterArea=$event" #Area="ngModel" disabled="true" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="txtPlaceName" [ngClass]="(placeForm.submitted || PlaceName.dirty) && PlaceName.invalid ? 'err-title':''">Place Name <span class="err-label">*</span></label>
+                <div class="fa-input">
+                  <input id="txtPlaceName" type="text" class="form-control" name='PlaceName' [(ngModel)]="placeModel.Name" (blur)="placeChange($event)"
+                    [ngStyle]="_valDuplicateInputStyle(isDuplicatePlace)" #PlaceName="ngModel" autocomplete="off" [ngClass]="(placeForm.submitted || PlaceName.dirty) && PlaceName.invalid ? 'err-input':''"
+                    required />
+                  <span *ngIf="isDuplicatePlace==false"><i class="fa fa-check item-available" ></i></span>
+                  <span *ngIf="isDuplicatePlace==true"><i class="fa fa-times item-not-available" ></i></span>
+                </div>
+
+                <label *ngIf="(placeForm.submitted || PlaceName.dirty) && PlaceName.errors && PlaceName.errors['required']" class="err-label">Please enter Place Name</label>
+                <label *ngIf="!((placeForm.submitted || PlaceName.dirty) && PlaceName.errors && PlaceName.errors['required']) && isDuplicatePlace == true"
+                  class="err-label">Place Name is already exist</label>
+              </div>
+              <div *ngIf="suggestion" class="sty-checkbox">
+                <input id="chkIncludeTrips" type="checkbox" class="form-control" value="" name='chkIncludeTrips' [(ngModel)]="IncludeTrips"
+                  #chkIncludeTrips="ngModel">
+                <label for="chkIncludeTrips">Include Trips</label>
+              </div>
+              <br>
+              <div *ngIf="suggestion" class="sty-checkbox mb10">
+                <input id="chkIncludePassingThrough" type="checkbox" class="form-control" value="" name='chkIncludePassingThrough' [(ngModel)]="IncludePassingThrough"
+                  #chkIncludePassingThrough="ngModel">
+                <label for="chkIncludePassingThrough">Include Passing Through</label>
+              </div>
+
+              <input type="submit" class="btn btn-default btn-orange full-width" [value]="loadingSave ? 'Please wait...': (this.placeModel.PlaceId ? 'Update Place':'Create Place')"
+              />
+            </form>
+
+          </div>
+          <div class="clearfix"></div>
+        </ng-template>
+      </kendo-panelbar-item>
+    </kendo-panelbar>
+
+  </div>
+</div>
+<div class="place-right">
+  <div class="box-height">
+    <app-map *ngIf='mapReady' [detailPlace]="true" [placeId]="placeId" (drawPlaceArea)="drawPlace($event)" (resetPlaceArea)="resetPlace()"></app-map>
+  </div>
+</div>
+<div class="clearfix"></div>

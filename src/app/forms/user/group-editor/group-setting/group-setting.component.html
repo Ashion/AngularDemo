@@ -1,0 +1,149 @@
+<div class="content-breadcrumb">
+  <ul class="breadcrumb-box">
+    <li><a href="#">Group Editor</a></li>
+    <li><a routerLink="/user/group-editor/editor">Group Settings</a></li>
+    <!-- <li>{{ paramId == 'new' ? 'Add Device' : 'Modify Device' }}</li> -->
+  </ul>
+</div>
+<div class="content-box" style="padding-left: 200px;">
+  <form name="form" (ngSubmit)="groupForm.form.valid && saveGroup()" #groupForm="ngForm" novalidate>
+    <kendo-tabstrip>
+      <kendo-tabstrip-tab title="Group Details" [selected]="IsSelected">
+        <ng-template kendoTabContent>
+          <div class="form-horizontal">
+            <div class="form-group">
+              <div class="col-md-12 client-box">
+                <label class="control-label" [ngClass]="_err.label(groupForm, Name)">Group Name <span class="err-label">*</span></label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="Name" required maxlength="100" [ngStyle]="_valDuplicateInputStyle(isDuplicateName)"
+                    (blur)="verifyGroupName($event)" [(ngModel)]="model.Name" #Name="ngModel" [ngClass]="_err.input(groupForm, Name)"
+                  />
+                  <span *ngIf="isDuplicateName==false"><i class="fa fa-check item-available"></i></span>
+                  <span *ngIf="isDuplicateName==true"><i class="fa fa-times item-not-available"></i></span>
+                  <label *ngIf="_err.required(groupForm, Name)" class="err-label">Please enter Group Name</label>
+                  <label *ngIf="_err.duplicate(groupForm, Name, isDuplicateName)" class="err-label">Group Name already in use</label>
+                </div>
+              </div>
+              <div class="col-sm-12 client-box">
+                <label class="control-label">Supervisor Name </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="SupervisorName" required maxlength="100" [(ngModel)]="model.SupervisorName"
+                    #SupervisorName="ngModel" />
+                </div>
+              </div>
+              <div class="col-sm-12 client-box">
+                <label class="control-label">Description </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="Description" required maxlength="1000" [(ngModel)]="model.Description" #Description="ngModel"
+                  />
+                </div>
+              </div>
+              <div class="col-sm-12 client-box">
+                <label class="control-label">Territory</label>
+                <kendo-dropdownlist class="form-control" [data]="territoryData" [textField]="'Name'" [valueField]="'Id'" [defaultItem]="{ Name: 'Select Territory', Id: null }"
+                  [(value)]="model.TerritoryId" [valuePrimitive]="true">
+                </kendo-dropdownlist>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </kendo-tabstrip-tab>
+      <kendo-tabstrip-tab title="Time Settings" [selected]="!IsSelected">
+        <ng-template kendoTabContent>
+          <div class="form-horizontal">
+            <div class="form-group">
+              <div class="col-sm-12 client-box">
+                <label class="control-label">Timezone</label>
+                <kendo-dropdownlist class="form-control" [data]="timezoneData" [textField]="'Name'" [valueField]="'Id'" name="timezone" [(value)]="model.TimezoneId"
+                  [valuePrimitive]="true">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-sm-12 client-box">
+                <label class="control-label">Unit of Measure</label>
+                <kendo-dropdownlist class="form-control" [data]="measurementUnitData" [textField]="'Name'" [valueField]="'Id'" [(value)]="model.MeasurementUnitId"
+                  [valuePrimitive]="true">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-sm-12 client-box">
+                <label class="control-label">Volume Measurement</label>
+                <kendo-dropdownlist class="form-control" [data]="measurementUnitData" [textField]="'Name'" [valueField]="'Id'" [(value)]="model.VolumeUnitId"
+                  [valuePrimitive]="true">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-sm-12 client-box">
+                <label class="control-label">Temperature Measurement Unit</label>
+                <kendo-dropdownlist class="form-control" [data]="measurementUnitData" [textField]="'Name'" [valueField]="'Id'" [(value)]="model.TemperatureUnitId"
+                  [valuePrimitive]="true">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-sm-12 client-box">
+                <label class="control-label">Country</label>
+                <kendo-dropdownlist class="form-control" [data]="countryData" [textField]="'Name'" [valueField]="'Id'" [(value)]="model.CountryId"
+                  [valuePrimitive]="true">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-sm-12 client-box">
+                <label class="control-label">Sunrise - Sunset</label>
+                <div class="width100">
+                  <md2-datepicker [(ngModel)]="model.SunriseTime" format='HH:mm' type="time" openOnFocus="true" name="SunriseTime" #SunriseTime="ngModel"></md2-datepicker>
+                  <md2-datepicker [(ngModel)]="model.SunsetTime" format='HH:mm' type="time" openOnFocus="true" name="SunsetTime" #SunsetTime="ngModel"></md2-datepicker>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </kendo-tabstrip-tab>
+      <kendo-tabstrip-tab title="Hours Of Operation" [selected]="!IsSelected">
+        <ng-template kendoTabContent>
+          <div class="col-sm-12 client-box">
+            <label class="control-label">Week Days</label>
+            <div class="width100">
+              <ul class="checkboxes">
+                <li>
+                  <input id="sun" type="checkbox" name="sun">
+                  <label for="sun">Sun</label>
+                </li>
+                <li>
+                  <input id="mon" type="checkbox" name="mon" checked="checked" class="user-success">
+                  <label for="mon">Mon</label>
+                </li>
+                <li>
+                  <input id="tue" type="checkbox" name="tue" checked="checked">
+                  <label for="tue">Tue</label>
+                </li>
+                <li>
+                  <input id="wed" type="checkbox" name="wed" checked="checked">
+                  <label for="wed">Wed</label>
+                </li>
+                <li>
+                  <input id="thu" type="checkbox" name="thu" checked="checked">
+                  <label for="thu">Thu</label>
+                </li>
+                <li>
+                  <input id="fri" type="checkbox" name="fri" checked="checked">
+                  <label for="fri">Fri</label>
+                </li>
+                <li>
+                  <input id="sat" type="checkbox" name="sat">
+                  <label for="sat">Sat</label>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-sm-12 client-box">
+            <label class="control-label">Hours</label>
+            <div class="width100">
+              <md2-datepicker [(ngModel)]="model.OperationStartTime" type="time" openOnFocus="true" name="OperationStartTime" #OperationStartTime="ngModel"></md2-datepicker>
+              <md2-datepicker [(ngModel)]="model.OperationEndTime" type="time" openOnFocus="true" name="OperationEndTime" #OperationEndTime="ngModel"></md2-datepicker>
+            </div>
+          </div>
+        </ng-template>
+      </kendo-tabstrip-tab>
+    </kendo-tabstrip>
+    <div class="btn-box" *ngIf="!IsCreatePage">
+      <button type="button" class="btn btn-default btn-gray" routerLink="/admin/device">Cancel</button>
+      <button type="submit" class="btn btn-default btn-orange" [disabled]="loading">Save</button>
+      <i *ngIf="loading" class="fa fa-refresh fa-pulse fa-fw margin-bottom"></i>
+    </div>
+  </form>
+</div>

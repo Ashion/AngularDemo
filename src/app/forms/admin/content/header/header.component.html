@@ -1,0 +1,26 @@
+<!-- header section -->
+<header class="main-header">
+  <div class="main-logo">
+    <img src="assets/images/trt-logo.png" title="logo" alt="logo" />
+  </div>
+  <ul class="hader-user">
+    <li class="user-box">
+      <a href="#">
+        <!-- <div class="user-img">{{userAlis}}</div> -->
+        <div *ngIf="LogoUrl == '' else logo_img" class="user-img">{{userAlis}}</div>
+        <ng-template #logo_img>
+          <img class="user-img" [src]="LogoUrl" title="user-img" alt="user-img" /></ng-template>
+        {{AuthUserObj.FirstName}} {{AuthUserObj.LastName}}
+      </a>
+      <div class="menu-sub-box">
+        <a href="javascript:void(0)" (click)="changePasswordClick()">Change Password</a>
+        <a href="javascript:void(0)" (click)="logoutClick()">Logout</a>
+      </div>
+    </li>
+  </ul>
+  <ul class="menu-main">
+    <li><a routerLinkActive="menu-main-link-active" routerLink="/admin/settings">Settings</a></li>
+    <li><a routerLinkActive="menu-main-link-active" routerLink="/admin/tools">Site Tools</a></li>
+  </ul>
+</header>
+<!-- header section end-->

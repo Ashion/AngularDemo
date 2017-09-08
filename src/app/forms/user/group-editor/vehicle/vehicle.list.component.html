@@ -1,0 +1,49 @@
+<div class="content-wrapper">
+    <div class="top-button-main p15">
+
+        <div class="top-button-right pull-right">
+            <div class="top-filter pull-left">
+                <input type="text" placeholder="Search People..." name="searchText" class="form-control k-textbox" value="filterText" [(ngModel)]="filterText"
+                    (ngModelChange)="fileter()" />
+            </div>
+            <button class="btn btn-orange pull-right" kendoButton (click)="_router.navigate(['/user/group-editor/vehicle/new'])">+ Add Vehicle</button>
+        </div>
+    </div>
+    <div class="grid-main p15 full-width">
+        <div class="grid-box full-width">
+            <kendo-grid [data]="gridData" [pageSize]="gridPageSize" [pageable]="true" (pageChange)="pageChange($event)" [skip]="skip"
+                [sortable]="{
+                allowUnsort: allowUnsort,
+                mode: multiple ? 'multiple' : 'single'
+                }" [sort]="sort" (sortChange)="sortChange($event)" (edit)="editHandler($event)" (remove)="removeHandler($event)">
+
+                <kendo-grid-command-column title="Action" width="80px">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        <img width="12px" class="k-grid-action-btn" kendoGridEditCommand src="assets/images/edit-icon.png" alt="Edit" />
+                        <img width="12px" class="k-grid-action-btn" kendoGridRemoveCommand src="assets/images/delete-icon.png
+                  " title="Delete Client" alt="Delete " />
+                    </ng-template>
+                </kendo-grid-command-column>
+                <kendo-grid-column field="BatteryVoltage" title="Battery Voltage" width="70px"></kendo-grid-column>
+                <kendo-grid-column field="Name" title="Name" width="160px"></kendo-grid-column>
+                <kendo-grid-column field="Driver" title="Driver" width="160px"></kendo-grid-column>
+                <kendo-grid-column field="Description" title="Description" width="150px"></kendo-grid-column>
+                <kendo-grid-column field="VIN" title="VIN" width="130px"></kendo-grid-column>
+                <kendo-grid-column field="EngineHours" title="Engine Hours" width="70px"></kendo-grid-column>
+                <kendo-grid-column field="TypeName" title="Type Name" width="150px"></kendo-grid-column>
+                <kendo-grid-column field="Model" title="Model" width="100px"></kendo-grid-column>
+                <kendo-grid-column field="Year" title="Year" width="70px"></kendo-grid-column>
+                <kendo-grid-column field="Odometer" title="Odometer" width="100px"></kendo-grid-column>
+                <kendo-grid-column field="BatteryLevel" title="Battery Level" width="70px"></kendo-grid-column>
+                <kendo-grid-column field="IMEI" title="IMEI" width="150px"></kendo-grid-column>
+                <kendo-grid-column field="Make" title="Make" width="100px"></kendo-grid-column>
+                <kendo-grid-column field="Status" title="Status" width="70px">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{ (dataItem.IsActive ? "Active " : "Inactive ") }}
+                    </ng-template>
+                </kendo-grid-column>
+
+            </kendo-grid>
+        </div>
+    </div>
+</div>

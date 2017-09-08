@@ -1,0 +1,64 @@
+<div class="places-left">
+  <div class="box-height">
+    <div class="places-title full-width">
+      <span>{{movingVehicleCount}} Moving vehicles</span>
+      <div class="onoffswitch">
+        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" (ngModelChange)="topSwitchChangeEvent($event)"
+          [(ngModel)]="onoffswitch">
+        <label class="onoffswitch-label" for="myonoffswitch">
+        <span class="onoffswitch-inner"></span>
+        <span class="onoffswitch-switch"></span>
+    </label>
+      </div>
+    </div>
+
+    <div class="clearfix"></div>
+    <div class="map-widget--search">
+      <div class="form-group">
+        <span class="input-group">
+                <input type="text" name="groupSerach" placeholder="Search groups" class="form-control"
+                 [(ngModel)]="groupSerach" (ngModelChange)="searchGroup()" />
+                <span class="input-group-btn">
+                  <button type="button" class="btn-reset btn btn-default" (click)="clearFilter()"><i class="ion-close-round">X</i></button>
+                </span>
+        </span>
+      </div>
+    </div>
+    <div class="col-md-12 mt10" *ngIf="filterGroups.length == 0 && clientGropus.length != 0">Your search has returned no results. Please refine your search details.</div>
+    <div class="col-md-12 mt10" *ngIf="clientGropus.length == 0 && !loadingGroups">No groups found to display.</div>
+    <div class="col-md-12 mt10" *ngIf="loadingGroups && clientGropus.length == 0">Loading....</div>
+    <div class="track-left-box">
+      <div slimScroll height="100%" size="5px">
+        <div class="accordion" id="accordion2">
+          <div class="accordion-group" *ngFor="let cg of filterGroups; let i = index">
+            <div class="accordion-heading">
+              <a class="accordion-toggle" data-toggle="collapse" [href]="'#collapse' + i">
+                <div>
+                  <div class="log-search-res-box full-width">
+                    <div class="log-user-img">
+                      <img [src]="cg.PhotoURL || 'assets/images/austracker_placeholder.png'" [title]="cg.Name" alt="driver-image" />
+                    </div>
+                    <strong><a class="app-jump" [id]="cg.ClientGroupId">{{cg.Name}}</a></strong>
+                    <div>
+                      <span>{{_moment.utc() | dtToTimezone: cg.TimezoneRegion | date}} | {{_moment.utc() | dtToTimezone: cg.TimezoneRegion | date:'jms'}}</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+              <a href="javascript:void(0)" (click)="followGroup(cg.ClientGroupId, cg)" [class.active]="cg.isFollow" class="btn btn-orange flw-btn">{{cg.isFollow ? 'Unfollow' : 'Follow'}}</a>
+            </div>
+            <div [attr.id]="'collapse' + i" class="accordion-body collapse">
+              <div *ngFor="let list of getList(filterGroups, cg.ClientGroupId)" class="accordion-inner-box">{{list.Name}}
+                <span>
+                    {{list.Type}}
+                  </span>
+                <a href="javascript:void(0)" (click)="followVehicle(list.Id, cg, list)" [class.active]="list.isFollow" class="btn btn-orange flw-btn"
+                  style="z-index:1">{{list.isFollow ? 'Unfollow' : 'Follow'}}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

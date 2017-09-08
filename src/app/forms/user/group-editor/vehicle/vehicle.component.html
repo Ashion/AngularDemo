@@ -1,0 +1,479 @@
+<div class="content-breadcrumb">
+  <ul class="breadcrumb-box">
+    <li><a href="#">Group Editor</a></li>
+    <li><a routerLink="/user/group-editor/editor">Group Settings</a></li>
+    <!-- <li>{{ paramId == 'new' ? 'Add Device' : 'Modify Device' }}</li> -->
+  </ul>
+</div>
+<div class="content-box" style="padding-left: 200px;">
+  <form name="form" (ngSubmit)="vehicleForm.form.valid && saveVehicle()" #vehicleForm="ngForm" novalidate>
+    <kendo-tabstrip>
+      <kendo-tabstrip-tab title="Vehicle Detail" [selected]="IsSelected">
+        <ng-template kendoTabContent>
+          <div class="form-horizontal">
+            <div class="form-group">
+              <div class="col-md-6 client-box">
+                <label class="control-label" [ngClass]="_err.label(vehicleForm, Name)">Vehicle Name <span class="err-label">*</span></label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="Name" required maxlength="50" [(ngModel)]="model.Name" #Name="ngModel" />
+                  <label *ngIf="_err.required(vehicleForm, Name)" class="err-label">Please enter Vehicle Name</label>
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">VIN </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="VIN" maxlength="50" [(ngModel)]="model.VIN" #VIN="ngModel" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Vehicle Type</label>
+                <kendo-dropdownlist class="form-control" [data]="VehicleTypeDS" [textField]="'Name'" [valueField]="'Id'" [defaultItem]="{ Name: 'Select Vehicle Type', Id: null }"
+                  [(value)]="model.VehicleTypeId" [valuePrimitive]="true">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Year </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="Year" maxlength="4" [(ngModel)]="model.Year" #Year="ngModel" />
+                </div>
+              </div>
+              <div class="col-md-12 client-box">
+                <label class="control-label">Description </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="Description" maxlength="200" [(ngModel)]="model.Description" #Description="ngModel"
+                    multiple="multiple" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Make </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="Make" maxlength="25" [(ngModel)]="model.Make" #Make="ngModel" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Model </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="Model" maxlength="25" [(ngModel)]="model.Model" #Model="ngModel" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">History Color </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="HistoryColor" maxlength="25" [(ngModel)]="model.HistoryColor" #HistoryColor="ngModel"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">IMEI </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="IMEI" maxlength="25" disabled="disabled" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Odometer (Km) </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="TotalOdometerKM" maxlength="25" [(ngModel)]="model.TotalOdometerKM" #TotalOdometerKM="ngModel"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Idle Economy </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="IdleEconomy" maxlength="25" [(ngModel)]="model.IdleEconomy" #IdleEconomy="ngModel"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Engine Hours </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="TotalEngineHours" maxlength="25" [(ngModel)]="model.TotalEngineHours" #TotalEngineHours="ngModel"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Battery Level </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="BatteryLevel" maxlength="25" [(ngModel)]="model.BatteryLevel" #BatteryLevel="ngModel"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Engine </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="Engine" maxlength="25" [(ngModel)]="model.Engine" #Engine="ngModel" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Battery Voltage </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="BatteryVoltage" maxlength="25" [(ngModel)]="model.BatteryVoltage" #BatteryVoltage="ngModel"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Transmission</label>
+                <kendo-dropdownlist class="form-control" [data]="TransmissionDS" [textField]="'Name'" [valueField]="'Id'" [defaultItem]="{ Name: 'Select Transmission', Id: null }"
+                  [(value)]="model.Transmission" [valuePrimitive]="true">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Engine Brand </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="EngineBrand" maxlength="25" [(ngModel)]="model.EngineBrand" #EngineBrand="ngModel"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Engine Type </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="EngineType" maxlength="25" [(ngModel)]="model.EngineType" #EngineType="ngModel"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Ignition Status</label>
+                <kendo-dropdownlist class="form-control" [data]="IgnitionStatusDS" [textField]="'Name'" [valueField]="'Id'" [(value)]="model.IgnitionStatus"
+                  [valuePrimitive]="true">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Temperature </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="Temperature" maxlength="25" [(ngModel)]="model.Temperature" #Temperature="ngModel"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Temperature 2 </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="Temperature2" maxlength="25" [(ngModel)]="model.Temperature2" #Temperature2="ngModel"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Fuel System Type</label>
+                <kendo-dropdownlist class="form-control" [data]="fuelSystemTypeDS" [textField]="'Name'" [valueField]="'Id'" [defaultItem]="{ Name: 'Select Fuel System Type', Id: null }"
+                  [(value)]="model.FuelSystemTypeId" [valuePrimitive]="true">
+                </kendo-dropdownlist>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </kendo-tabstrip-tab>
+      <kendo-tabstrip-tab title="Fuel" [selected]="!IsSelected" [disabled]="isNew">
+        <ng-template kendoTabContent>
+          <div class="form-horizontal">
+            <div class="form-group">
+              <div class="col-md-6 client-box">
+                <label class="control-label">Fuel Type</label>
+                <kendo-dropdownlist class="form-control" [data]="fuelTypeDS" [textField]="'Name'" [valueField]="'Id'" [defaultItem]="{ Name: 'Select Fuel Type', Id: null }"
+                  [(value)]="model.OtherDetails.FuelTypeId" [valuePrimitive]="true">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Fuel Cost </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="FuelCost" maxlength="25" [(ngModel)]="model.OtherDetails.FuelCost" #FuelCost="ngModel"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Fuel Economy (km/l) </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="FuelEconomy" maxlength="25" [(ngModel)]="model.OtherDetails.FuelEconomy" #FuelEconomy="ngModel"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Fuel Comsuption (Hr/G) </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="FuelConsumption" maxlength="25" [(ngModel)]="model.OtherDetails.FuelConsumption"
+                    #FuelConsumption="ngModel" />
+                </div>
+              </div>
+              <div *ngFor="let fuelEle of model.Fuel" class="col-md-12 client-box">
+                <h4>Tank {{fuelEle.TankNo}}</h4>
+                <hr>
+                <div class="col-md-6 client-box">
+                  <label class="control-label">Flow Rate in Minutes (l) </label>
+                  <div class="fa-input">
+                    <input type="text" class="form-control" name="FlowRate" maxlength="25" [(ngModel)]="fuelEle.FlowRate" #FlowRate="ngModel"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6 client-box">
+                  <label class="control-label">Sensor Height (Meters) </label>
+                  <div class="fa-input">
+                    <input type="text" class="form-control" name="SensorHeight" maxlength="25" [(ngModel)]="fuelEle.SensorHeight" #SensorHeight="ngModel"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6 client-box">
+                  <label class="control-label">Fuel Capacity (l) </label>
+                  <div class="fa-input">
+                    <input type="text" class="form-control" name="FuelCapacity" maxlength="25" [(ngModel)]="fuelEle.FuelCapacity" #FuelCapacity="ngModel"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6 client-box">
+                  <label class="control-label">Spring Height (Meters) </label>
+                  <div class="fa-input">
+                    <input type="text" class="form-control" name="SpringHeight" maxlength="25" [(ngModel)]="fuelEle.SpringHeight" #SpringHeight="ngModel"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6 client-box">
+                  <label class="control-label">Fuel Level (%) </label>
+                  <div class="fa-input">
+                    <input type="text" class="form-control" name="FuelLevel" maxlength="25" [(ngModel)]="fuelEle.FuelLevel" #FuelLevel="ngModel"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6 client-box">
+                  <label class="control-label">Tank Circumference (Meters) </label>
+                  <div class="fa-input">
+                    <input type="text" class="form-control" name="Circumference" maxlength="25" [(ngModel)]="fuelEle.Circumference" #Circumference="ngModel"
+                    />
+                  </div>
+                </div>
+
+                <div class="col-md-3 client-box">
+                  <label class="control-label">Minimum Fuel Voltage (V) </label>
+                  <div class="fa-input">
+                    <input type="text" class="form-control" name="MinFuelVoltage" maxlength="25" [(ngModel)]="fuelEle.MinFuelVoltage" #MinFuelVoltage="ngModel"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-3 client-box">
+                  <label class="control-label">Maximum Fuel Voltage (V) </label>
+                  <div class="fa-input">
+                    <input type="text" class="form-control" name="MaxFuelVoltage" maxlength="25" [(ngModel)]="fuelEle.MaxFuelVoltage" #MaxFuelVoltage="ngModel"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6 client-box">
+                  <label class="control-label">Tank Length (Meters) </label>
+                  <div class="fa-input">
+                    <input type="text" class="form-control" name="TankLength" maxlength="25" [(ngModel)]="fuelEle.TankLength" #TankLength="ngModel"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </kendo-tabstrip-tab>
+      <kendo-tabstrip-tab title="Other" [selected]="!IsSelected" [disabled]="isNew">
+        <ng-template kendoTabContent>
+          <div class="form-horizontal">
+            <div class="form-group">
+              <div class="col-md-6 client-box">
+                <label class="control-label">Road Side Assistance </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="RoadSideAssistance" maxlength="25" [(ngModel)]="model.OtherDetails.RoadSideAssistance"
+                    #RoadSideAssistance="ngModel" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Road Side Assistance Phone </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="RoadSideAssistancePhoneNumber" maxlength="25" [(ngModel)]="model.OtherDetails.RoadSideAssistancePhoneNumber"
+                    #RoadSideAssistancePhoneNumber="ngModel" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Insurance Company </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="InsuaranceCompany" maxlength="25" [(ngModel)]="model.OtherDetails.InsuaranceCompany"
+                    #InsuaranceCompany="ngModel" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Insurance Policy </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="InsuarancePolicy" maxlength="25" [(ngModel)]="model.OtherDetails.InsuarancePolicy"
+                    #InsuarancePolicy="ngModel" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Acquired Date </label>
+                <div class="fa-input">
+                  <md2-datepicker class="width100" [(ngModel)]="model.OtherDetails.AcquiredDate" #AcquiredDate="ngModel" name="AcquiredDate"
+                    type="date" openOnFocus="true"></md2-datepicker>
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Insurance Expire Date </label>
+                <div class="fa-input">
+                  <md2-datepicker class="width100" [(ngModel)]="model.OtherDetails.InsuaranceExpiryDate" #InsuaranceExpiryDate="ngModel" name="InsuaranceExpiryDate"
+                    type="date" openOnFocus="true"></md2-datepicker>
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Tag </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="Tag" maxlength="25" [(ngModel)]="model.OtherDetails.Tag" #Tag="ngModel" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Tag State </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="TagState" maxlength="25" [(ngModel)]="model.OtherDetails.TagState" #TagState="ngModel"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Tag Issued Date </label>
+                <div class="fa-input">
+                  <md2-datepicker class="width100" [(ngModel)]="model.OtherDetails.TagIssuedDate" #TagIssuedDate="ngModel" name="TagIssuedDate"
+                    type="date" openOnFocus="true"></md2-datepicker>
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Tag Expiration Date </label>
+                <div class="fa-input">
+                  <md2-datepicker class="width100" [(ngModel)]="model.OtherDetails.TagExpiryDate" #TagExpiryDate="ngModel" name="TagExpiryDate"
+                    type="date" openOnFocus="true"></md2-datepicker>
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Vehicle Class</label>
+                <kendo-dropdownlist class="form-control" [data]="ClassDS" [(value)]="model.OtherDetails.VehicleClassId">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-md-6 client-box">
+              </div>
+              <hr>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Equipment Number </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="EquipmentNumber" maxlength="25" [(ngModel)]="model.OtherDetails.EquipmentNumber"
+                    #EquipmentNumber="ngModel" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">License </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="EquipmentLicense" maxlength="25" [(ngModel)]="model.OtherDetails.EquipmentLicense"
+                    #EquipmentLicense="ngModel" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Country</label>
+                <kendo-dropdownlist class="form-control" [data]="countryDS" [textField]="'Name'" [valueField]="'Id'" [defaultItem]="{ Name: 'Select Country', Id: null }"
+                  [(value)]="model.OtherDetails.EquipmentCountryId" [valuePrimitive]="true">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Country/Province </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="EquipmentState" maxlength="25" [(ngModel)]="model.OtherDetails.EquipmentState"
+                    #EquipmentState="ngModel" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Price </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="EquipmentPrice" maxlength="25" [(ngModel)]="model.OtherDetails.EquipmentPrice"
+                    #EquipmentPrice="ngModel" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Is Lease </label>
+                <div class="fa-input">
+                  <input type="checkbox" name="IsEquipmentOnLease" [(ngModel)]="model.OtherDetails.IsEquipmentOnLease" #IsEquipmentOnLease="ngModel"
+                  />
+                </div>
+              </div>
+              <h4>Trunk/Cargo</h4>
+              <hr>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Grant Number </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="GrantNumber" maxlength="25" [(ngModel)]="model.OtherDetails.GrantNumber" #GrantNumber="ngModel"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Activity Number </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="GrantActivityNumber" maxlength="25" [(ngModel)]="model.OtherDetails.GrantActivityNumber"
+                    #GrantActivityNumber="ngModel" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Grantee Name </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="GranteeName" maxlength="25" [(ngModel)]="model.OtherDetails.GranteeName" #GranteeName="ngModel"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+              </div>
+              <h4>Custom Defined</h4>
+              <hr>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Custom Defined 1 </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="CustomDefined1" maxlength="25" [(ngModel)]="model.OtherDetails.CustomDefined1"
+                    #CustomDefined1="ngModel" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Custom Defined 2 </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="CustomDefined2" maxlength="25" [(ngModel)]="model.OtherDetails.CustomDefined2"
+                    #CustomDefined2="ngModel" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Custom Defined 3 </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="CustomDefined3" maxlength="25" [(ngModel)]="model.OtherDetails.CustomDefined3"
+                    #CustomDefined3="ngModel" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Custom Defined 4 </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="CustomDefined4" maxlength="25" [(ngModel)]="model.OtherDetails.CustomDefined4"
+                    #CustomDefined4="ngModel" />
+                </div>
+              </div>
+              <div class="col-md-6 client-box">
+                <label class="control-label">Custom Defined 5 </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="CustomDefined5" maxlength="25" [(ngModel)]="model.OtherDetails.CustomDefined5"
+                    #CustomDefined5="ngModel" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </kendo-tabstrip-tab>
+      <kendo-tabstrip-tab title="Driver" [selected]="!IsSelected" [disabled]="isNew">
+        <ng-template kendoTabContent>
+          <div class="form-horizontal">
+            <div class="form-group">
+
+            </div>
+          </div>
+        </ng-template>
+      </kendo-tabstrip-tab>
+      <kendo-tabstrip-tab title="Notes" [selected]="!IsSelected" [disabled]="isNew">
+        <ng-template kendoTabContent>
+          <div class="form-horizontal">
+            <div class="form-group">
+
+            </div>
+          </div>
+        </ng-template>
+      </kendo-tabstrip-tab>
+    </kendo-tabstrip>
+    <div class="btn-box" *ngIf="!IsCreatePage">
+      <button type="button" class="btn btn-default btn-gray" routerLink="/admin/device">Cancel</button>
+      <button type="submit" class="btn btn-default btn-orange" [disabled]="loading">Save</button>
+      <i *ngIf="loading" class="fa fa-refresh fa-pulse fa-fw margin-bottom"></i>
+    </div>
+  </form>
+</div>

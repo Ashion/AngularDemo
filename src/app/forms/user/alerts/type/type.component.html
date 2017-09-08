@@ -1,0 +1,28 @@
+<div class="content-wrapper pl0">
+    <div class="top-button-main p15">
+        Choose alert type
+        <button class="btn btn-gray pull-right ml10" (click)="router.navigate(['/user/alerts'])">Back</button>
+    </div>
+    <div class="alert-type full-width">
+        <div class="col-md-10 col-md-offset-1 text-center">
+
+            <div class="col-md-4 link" (click)="router.navigate(['/user/alerts/alert'])">
+                <i class="fa fa-exclamation-triangle fa-5x" aria-hidden="true"></i><br/>
+                <h3>Alert</h3>
+                <div>Setup your alerts based on Vehicle or Driver Panic / Speed / Harsh Driving etc.</div>
+            </div>
+            <div class="col-md-4 link" (click)="router.navigate(['/user/alerts/place'])">
+                <i class="fa fa-map-marker fa-5x" aria-hidden="true"></i><br/>
+                <h3>Place Alert</h3>
+                <div>Notifications will be created when your vehicles entering or leaving selected places.</div>
+            </div>
+            <div class="col-md-4 link" (click)="router.navigate(['/user/alerts/timepoint'])">
+                <i class="fa fa-clock-o fa-5x" aria-hidden="true"></i><br/>
+                <h3>Timepoint</h3>
+                <div>Your vehicles should be in specific time out or in selected places. Good for some job types.</div>
+            </div>
+            <div class="col-md-4">
+            </div>
+        </div>
+    </div>
+</div>

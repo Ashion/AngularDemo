@@ -1,0 +1,348 @@
+<div class="content-wrapper pl0">
+  <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+    <div class="fl-form">
+      <div class="box-header text-center">
+        <div class="box-title">
+          <h1>
+            Export Logbook
+          </h1>
+        </div>
+        <a routerLink="/export" class="btn--form-header left btn btn-default">&lt; Back</a>
+      </div>
+      <div class="form-content">
+        <div class="export-row export--date-interval">
+          <header>
+            <div class="pull-right" *ngIf="dateInterval == 'CI'">
+              <md2-datepicker [(ngModel)]="fromDate" type="date" openOnFocus="true" format="MMMM d, y"></md2-datepicker>
+              <md2-datepicker [(ngModel)]="toDate" type="date" openOnFocus="true" format="MMMM d, y"></md2-datepicker>
+            </div>
+            <div class="pull-right" *ngIf="dateInterval != 'CI'">
+              {{displayDateInterval}}
+            </div>
+            <h3 class="label-category">Date interval</h3>
+          </header>
+          <div>
+            <div class="btn-group btn-group-justified">
+              <label class="btn btn-default" for="LW" [class.active]="dateInterval == 'LW'"> 
+                <input type="radio" class="hidden" name="intervalOption" [(ngModel)]="dateInterval" (ngModelChange)="dateIntervalChange($event)" id="LW" value="LW" > 
+                <label for="LW">Last Week</label>
+              </label>
+              <label class="btn btn-default" for="TW" [class.active]="dateInterval == 'TW'">
+                <input type="radio" class="hidden" name="intervalOption" [(ngModel)]="dateInterval" (ngModelChange)="dateIntervalChange($event)" id="TW" value="TW" >
+                <label for="TW">This Week</label>
+              </label>
+              <label class="btn btn-default" for="LM" [class.active]="dateInterval == 'LM'"> 
+                <input type="radio" class="hidden" name="intervalOption" [(ngModel)]="dateInterval" (ngModelChange)="dateIntervalChange($event)" id="LM" value="LM" > 
+                <label for="LM">Last Month</label>
+              </label>
+              <label class="btn btn-default" for="TM" [class.active]="dateInterval == 'TM'"> 
+                <input type="radio" class="hidden" name="intervalOption" [(ngModel)]="dateInterval" (ngModelChange)="dateIntervalChange($event)" id="TM" value="TM" > 
+                <label for="TM">This Month</label>
+              </label>
+              <label class="btn btn-default" for="CI" [class.active]="dateInterval == 'CI'"> 
+                <input type="radio" class="hidden" name="intervalOption" [(ngModel)]="dateInterval" (ngModelChange)="dateIntervalChange($event)" id="CI" value="CI" > 
+                <label for="CI">Custom Interval</label>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="export-row export--date-interval">
+          <header>
+            <h3 class="label-category">SPECIFIC TIME</h3>
+          </header>
+          <div>
+            <div class="btn-group btn-group-justified">
+              <label class="btn btn-default active"> 
+                  <input type="checkbox" class="hidden" name="daysOfWeek" id="mon" (change)="daysOfWeekChange($event)" value="1"> Monday
+                  </label>
+              <label class="btn btn-default active">
+                  <input type="checkbox" class="hidden" name="daysOfWeek" id="tue" (change)="daysOfWeekChange($event)" value="2"> Tuesday
+                </label>
+              <label class="btn btn-default active"> 
+                  <input type="checkbox" class="hidden" name="daysOfWeek" id="wed" (change)="daysOfWeekChange($event)" value="3"> Wednesday
+                </label>
+              <label class="btn btn-default active"> 
+                  <input type="checkbox" class="hidden" name="daysOfWeek" id="thr" (change)="daysOfWeekChange($event)" value="4"> Thursday
+                </label>
+              <label class="btn btn-default active"> 
+                  <input type="checkbox" class="hidden" name="daysOfWeek" id="fri" (change)="daysOfWeekChange($event)" value="5"> Friday
+                </label>
+              <label class="btn btn-default active"> 
+                  <input type="checkbox" class="hidden" name="daysOfWeek" id="sat" (change)="daysOfWeekChange($event)" value="6"> Saturday
+                </label>
+              <label class="btn btn-default active"> 
+                  <input type="checkbox" class="hidden" name="daysOfWeek" id="sun" (change)="daysOfWeekChange($event)" value="0"> Sunday
+                </label>
+            </div>
+            <div class="row">
+              <div class="col-xs-12">
+                <div class="time-selects pull-right"><span>From</span>
+                  <div class="dropdown btn-group">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                      {{displayFromTime}}
+                      <span class="caret"></span></button>
+                    <ul class="dropdown-menu" (click)="fromTimeClick($event)" role="menu">
+                      <li role="presentation"><a role="menuitem" data-value="0">Any time</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="12:00 AM">12:00 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="01:00 AM">1:00 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="02:00 AM">2:00 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="03:00 AM">3:00 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="04:00 AM">4:00 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="05:00 AM">5:00 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="06:00 AM">6:00 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="07:00 AM">7:00 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="08:00 AM">8:00 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="09:00 AM">9:00 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="10:00 AM">10:00 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="11:00 AM">11:00 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="12:00 PM">12:00 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="01:00 PM">1:00 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="02:00 PM">2:00 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="03:00 PM">3:00 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="04:00 PM">4:00 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="05:00 PM">5:00 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="06:00 PM">6:00 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="07:00 PM">7:00 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="08:00 PM">8:00 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="09:00 PM">9:00 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="10:00 PM">10:00 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="11:00 PM">11:00 pm</a></li>
+                    </ul>
+                  </div>
+                  <span>To</span>
+                  <div class="dropdown btn-group">
+                    <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                      {{displayToTime}}
+                      <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" (click)="toTimeClick($event)" role="menu">
+                      <li role="presentation"><a role="menuitem" data-value="0">Any time</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="12:59 AM">12:59 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="01:59 AM">1:59 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="02:59 AM">2:59 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="03:59 AM">3:59 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="04:59 AM">4:59 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="05:59 AM">5:59 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="06:59 AM">6:59 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="07:59 AM">7:59 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="08:59 AM">8:59 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="09:59 AM">9:59 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="10:59 AM">10:59 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="11:59 AM">11:59 am</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="12:59 PM">12:59 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="01:59 PM">1:59 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="02:59 PM">2:59 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="03:59 PM">3:59 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="04:59 PM">4:59 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="05:59 PM">5:59 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="06:59 PM">6:59 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="07:59 PM">7:59 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="08:59 PM">8:59 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="09:59 PM">9:59 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="10:59 PM">10:59 pm</a></li>
+                      <li role="presentation"><a role="menuitem" data-value="11:59 PM">11:59 pm</a></li>
+                    </ul>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="export-row export-data-options">
+          <header>
+            <h3 class="label-category">Export data options</h3>
+          </header>
+          <div>
+            <div class="row">
+              <div class="col-sm-6">
+                <ul class="export-column">
+                  <li>
+
+                    <div class="pull-right">
+                      <div class="dropdown btn-group">
+                        <button [ngClass]="(checkedVehicleIds.length > 0)?'btn-primary':'btn-default'" class="btn dropdown-toggle" type="button"
+                          data-toggle="dropdown">
+                          {{checkedVehicleIds.length == 0 ? 'Select Vehicle' : checkedVehicleIds.length + ' vehicles'}}
+                        </button>
+                        <button type="button" *ngIf="checkedVehicleIds.length > 0" (click)="vehicleDeSelectAll()" class="btn btn-primary">
+                          <i class="fa fa-times"></i>
+                        </button>
+                        <button type="button" [disabled]="checkedVehicleIds.length == allVehicles.length" (click)="vehicleSelectAll()" class="btn btn-default">Select all</button>
+                        <ul class="dropdown-menu with-select popover bottom" (click)="vehicleDDClick($event)" role="menu">
+                          <h3 class="popover-title">
+                            <div>
+                              <div class="close"><i class="fa fa-times" aria-hidden="true"></i></div>Vehicles</div>
+                          </h3>
+                          <div class="popover-content">
+                            <div class="searchable-select">
+                              <div class="searchable-header">
+                                <div class="form-group">
+                                  <input type="text" placeholder="Search Vehicles..." class="form-control">
+                                </div>
+                                <h5>Available vehicles</h5>
+                                <hr>
+                              </div>
+                            </div>
+                            <div class="select-list">
+                              <li [class.active]="vehicle.checked" (click)="checkVehicle(vehicle)" role="presentation" *ngFor="let vehicle of filteredVehicles">
+                                <div class="item-toggle vehicle-toggle shorten-text">
+                                  <i class="fa fa-check check" aria-hidden="true"></i>
+                                  <div class="vehicle-name"><strong>{{vehicle.VehicleName}}</strong> {{vehicle.Rego }}
+                                  </div><small class="driver-name">{{vehicle.DriverName}}</small></div>
+                              </li>
+                            </div>
+                          </div>
+                        </ul>
+                      </div>
+                    </div>
+                    <h3>Vehicles</h3><span>Which vehicles to export?</span></li>
+                  <li>
+                    <h3>Driver</h3><span>Who was driving vehicle</span>
+                    <div class="onoffswitch">
+                      <input type="checkbox" name="driver" class="onoffswitch-checkbox" id="driver" [(ngModel)]="options.driver">
+                      <label class="onoffswitch-label" for="driver">
+                          <span class="onoffswitch-inner"></span>
+                          <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                  </li>
+                  <li>
+                    <h3>Location and time</h3><span>Start and end of each trip</span>
+                    <div class="onoffswitch">
+                      <input type="checkbox" name="location" class="onoffswitch-checkbox" id="location" [(ngModel)]="options.location">
+                      <label class="onoffswitch-label" for="location">
+                          <span class="onoffswitch-inner"></span>
+                          <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                  </li>
+                  <li>
+                    <h3>Places</h3><span>Use place names instead of addresses</span>
+                    <div class="onoffswitch">
+                      <input type="checkbox" name="places" class="onoffswitch-checkbox" id="places" [(ngModel)]="options.places">
+                      <label class="onoffswitch-label" for="places">
+                          <span class="onoffswitch-inner"></span>
+                          <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                  </li>
+                  <li>
+                    <h3>Odometer readings</h3><span>Value in KM before and after each trip</span>
+                    <div class="onoffswitch">
+                      <input type="checkbox" name="odometer" class="onoffswitch-checkbox" id="odometer" [(ngModel)]="options.odometer">
+                      <label class="onoffswitch-label" for="odometer">
+                          <span class="onoffswitch-inner"></span>
+                          <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                  </li>
+                  <li>
+                    <h3>Driven Distance</h3><span>in kilometres</span>
+                    <div class="onoffswitch">
+                      <input type="checkbox" name="distance" class="onoffswitch-checkbox" id="distance" [(ngModel)]="options.distance">
+                      <label class="onoffswitch-label" for="distance">
+                          <span class="onoffswitch-inner"></span>
+                          <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              <div class="col-sm-6">
+                <ul class="export-column">
+                  <li>
+                    <div class="pull-right btn-group btn-group-sm">
+                      <label class="btn btn-default" [class.active]="options.triptype == 'both'"> 
+                            <input type="radio" class="hidden" name="triptype" id="all" [(ngModel)]="options.triptype" (ngModelChange)="tripTypeChange($event)" value="both"/> 
+                            <label for="all">ALL</label>
+                      </label>
+                      <label class="btn btn-default" [class.active]="options.triptype == 'business'">
+                            <input type="radio" class="hidden" name="triptype" id="business" [(ngModel)]="options.triptype" (ngModelChange)="tripTypeChange($event)" value="business"/>
+                            <label for="business">BUSINESS</label>
+                      </label>
+                      <label class="btn btn-default" [class.active]="options.triptype == 'private'"> 
+                            <input type="radio" class="hidden" name="triptype" id="private" [(ngModel)]="options.triptype" (ngModelChange)="tripTypeChange($event)" value="private"/> 
+                            <label for="private">PRIVATE</label>
+                      </label>
+                    </div>
+                    <h3>Trip types</h3><span>Types of trips to export</span></li>
+                  <li>
+                    <h3>Duration</h3><span>Duration of each trip</span>
+                    <div class="onoffswitch">
+                      <input type="checkbox" name="duration" class="onoffswitch-checkbox" id="duration" [(ngModel)]="options.duration">
+                      <label class="onoffswitch-label" for="duration">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                      </label>
+                    </div>
+                  </li>
+                  <li>
+                    <h3>Score</h3><span>How good was each trip performed</span>
+                    <div class="onoffswitch">
+                      <input type="checkbox" name="score" class="onoffswitch-checkbox" id="score" [(ngModel)]="options.score">
+                      <label class="onoffswitch-label" for="score">
+                          <span class="onoffswitch-inner"></span>
+                          <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                  </li>
+                  <li>
+                    <h3>Note</h3><span>Purpose of each trip</span>
+                    <div class="onoffswitch">
+                      <input type="checkbox" name="note" class="onoffswitch-checkbox" id="note" [(ngModel)]="options.note">
+                      <label class="onoffswitch-label" for="note">
+                          <span class="onoffswitch-inner"></span>
+                          <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                  </li>
+                  <li>
+                    <h3>Refuel</h3><span>Location, amount in litres and price</span>
+                    <div class="onoffswitch">
+                      <input type="checkbox" name="refuel" class="onoffswitch-checkbox" id="refuel" [(ngModel)]="options.refuel">
+                      <label class="onoffswitch-label" for="refuel">
+                          <span class="onoffswitch-inner"></span>
+                          <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                  </li>
+                  <li>
+                    <h3>Stop time</h3><span>Stopped time between trips</span>
+                    <div class="onoffswitch">
+                      <input type="checkbox" name="stoptime" class="onoffswitch-checkbox" id="stoptime" [(ngModel)]="options.stoptime">
+                      <label class="onoffswitch-label" for="stoptime">
+                          <span class="onoffswitch-inner"></span>
+                          <span class="onoffswitch-switch"></span>
+                        </label>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="export-row export-output">
+          <header>
+            <h3 class="label-category">Output</h3>
+          </header>
+          <div>
+            <div class="btn-group">
+              <label class="btn btn-default" [class.active]="exporttype == 'pdf'"> 
+                        <input type="radio" class="hidden" name="exporttype" id="pdf" [(ngModel)]="exporttype" 
+                          (ngModelChange)="tripTypeChange($event)" value="pdf"/> 
+                        <label for="pdf">Print / PDF</label>
+              </label>
+              <label class="btn btn-default" [class.active]="exporttype == 'excel'">
+                        <input type="radio" class="hidden" name="exporttype" id="excel" [(ngModel)]="exporttype" 
+                          (ngModelChange)="tripTypeChange($event)" value="excel"/>
+                        <label for="excel">Excel</label>
+              </label>
+            </div>
+            <div class="pull-right"><button type="button" class="btn btn-primary">Export</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

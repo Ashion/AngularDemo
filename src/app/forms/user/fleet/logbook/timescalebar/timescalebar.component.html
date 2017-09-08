@@ -1,0 +1,10 @@
+<div class="map-grf">
+  <svg #timeScale id="timeScale">
+  </svg>
+  <div class="timescale-info" *ngIf="!loadingTimescale && !svgGraph">
+    <h2>No trips on this day</h2>
+  </div>
+  <div class="timescale-info" *ngIf="loadingTimescale">
+    <h2>Loading...</h2>
+  </div>
+</div>

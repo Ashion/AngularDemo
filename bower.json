@@ -1,0 +1,15 @@
+{
+  "name": "bower",
+  "description": "Austracker",
+  "main": "",
+  "authors": [
+    "Zealous System Pvt.Ltd."
+  ],
+  "license": "unlicensed",
+  "homepage": "",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "signalr": "^2.2.2"
+  }
+}

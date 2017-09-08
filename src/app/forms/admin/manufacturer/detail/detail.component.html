@@ -1,0 +1,36 @@
+<div class="content-breadcrumb">
+  <ul class="breadcrumb-box">
+    <li><a href="#">Manage Device Inventory</a></li>
+    <li><a routerLink="/admin/tools/manufacturer">Manufacturer</a></li>
+    <li>{{ paramId == 'new' ? 'Add Manufacturer' : 'Modify Manufacturer' }}</li>
+  </ul>
+</div>
+<div class="content-box">
+  <form name="form" (ngSubmit)="manufacturerForm.form.valid && save()" #manufacturerForm="ngForm" novalidate>
+    <div class="form-horizontal">
+      <div class="form-group">
+        <div class="col-sm-5">
+          <label class="control-label">Manufacturer Name <span class="err-label">*</span></label>
+          <div class="fa-input">
+            <input type="text" class="form-control" name="Name" required maxlength="50" [(ngModel)]="model.Name" #Name="ngModel" />
+            <label *ngIf="(manufacturerForm.submitted || Name.dirty) && Name.errors && Name.errors['required']" class="err-label">Please enter manufacturer name</label>
+          </div>
+        </div>
+        <div class="col-sm-5">
+          <label class="control-label">Phone Number</label>
+          <input type="text" class="form-control" name="PhoneNumber" maxlength="25" [(ngModel)]="model.PhoneNumber" #PhoneNumber="ngModel"
+          />
+        </div>
+        <br><br>
+        <div class="col-sm-5">
+          <label class="control-label">Website</label>
+          <input type="text" class="form-control" name="Website" maxlength="100" [(ngModel)]="model.Website" #Website="ngModel" />
+        </div>
+      </div>
+    </div>
+    <div class="btn-box">
+      <button type="button" class="btn btn-default btn-gray" (click)="onCancleClick()">Cancel</button>
+      <button type="submit" class="btn btn-default btn-orange">Save</button>
+    </div>
+  </form>
+</div>

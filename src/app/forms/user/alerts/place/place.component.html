@@ -1,0 +1,297 @@
+<div class="content-wrapper pl0">
+    <div class="top-button-main p15">
+        <i class="fa fa-map-marker mr5" aria-hidden="true"></i>Create new Place alert
+        <button class="btn btn-gray pull-right ml10" (click)="router.navigate(['/user/alerts/type'])">Back</button>
+    </div>
+    <div class="alert-section full-width">
+        <div class="col-md-10 col-md-offset-1">
+
+            <form name='form' novalidate (ngSubmit)="alertForm.form.valid && createAlert()" #alertForm="ngForm">
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label" [ngClass]="_err.label(alertForm, Name)">Alert Name <span class="err-label">*</span></label>
+                        <input id="txtName" type="text" class="form-control" name='Name' [(ngModel)]="alertModel.Name" #Name="ngModel" autocomplete="off"
+                            [ngClass]="_err.input(alertForm, Name)" required />
+                        <label *ngIf="_err.required(alertForm, Name)" class="err-label">Please enter Alert Name</label>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label" [ngClass]="alertForm.submitted && alertModel.VehicleIds.length == 0 ? 'err-title' : ''">Vehicles <span class="err-label">*</span></label>
+                        <label class="btn-vehicle" [ngClass]="alertModel.VehicleIds.length > 0 ? 'btn-orange':'btn-gray'" [popover]="vehiclePopover">
+                            {{(alertModel.VehicleIds.length > 0 ? alertModel.VehicleIds.length : '') + ' Select Vehicle'}}
+                        </label>
+                        <label *ngIf="alertModel.VehicleIds.length > 0" class="btn-orange" (click)="vehicleClearAll()" style="margin-left: -3px; cursor: pointer;">X</label>
+                        <label class="btn-gray text-center btn-vehicle-all" (click)="vehicleSelectAll()">
+                            Select All
+                        </label>
+                        <popover-content #vehiclePopover title="Vehicles" placement="bottom" [animation]="true" [closeOnClickOutside]="true" (onShown)="loadVehiclePopover=true">
+                            <div *ngIf="loadVehiclePopover">
+                                <input name="searchVehicle" class="form-control" placeholder="Search vehicles..." [ngModel]="searchVehicleText" (ngModelChange)="vehicleSearch($event)"
+                                />
+                                <div class="mt5 mb5"><b>Available vehicles</b></div>
+                                <div class="vehicle-list">
+                                    <div slimScroll height="100%" size="5px">
+                                        <li class="vehicle-box" [class.active]="vehicle.checked" (click)="vehicleChecked(vehicle)" *ngFor="let vehicle of filteredVehicles">
+                                            <i class="fa fa-check check" aria-hidden="true"></i>
+                                            <strong>{{vehicle.Name}}</strong> <small>{{vehicle.Rego}}</small>
+                                            <br />
+                                            <small>{{vehicle.DriverName}}</small>
+                                        </li>
+                                        <div *ngIf="filteredVehicles.length == 0 && allVehicles.length != 0" style="margin: 10px auto;">
+                                            No Vehicles containing <b>{{searchVehicleText}}</b>
+                                        </div>
+                                        <div *ngIf="allVehicles.length == 0" style="margin: 10px auto;">
+                                            No Vehicles found to display
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </popover-content>
+                        <br />
+                        <label *ngIf="alertForm.submitted && alertModel.VehicleIds.length == 0" class="err-label">At least one vehicle must by added</label>
+                        <br />
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">When <span class="err-label">*</span></label>
+                        <div class="fa-input">
+                            <input type="radio" name="when" id="entering" value="1" (change)="alertGenerateOn($event)" [checked]="alertModel.GenerateOnEntry">
+                            <label for="entering">entering</label>
+                            <input type="radio" name="when" id="leaving" value="2" (change)="alertGenerateOn($event)" [checked]="alertModel.GenerateOnExit">
+                            <label for="leaving">leaving</label>
+                            <input type="radio" name="when" id="both" value="3" (change)="alertGenerateOn($event)" [checked]="alertModel.GenerateOnEntry && alertModel.GenerateOnExit">
+                            <label for="both">both</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label" [ngClass]="_err.label(alertForm, PlaceId)">Place <span class="err-label">*</span></label>
+                        <kendo-dropdownlist name="PlaceId" class="form-control" [data]="filteredPlaces" [filterable]="true" (filterChange)="filterPlaces($event)"
+                            textField="Name" valueField="Id" [defaultItem]="{ Name: 'Select Place', Id: null }" [(ngModel)]="alertModel.PlaceId"
+                            [valuePrimitive]="true" [ngClass]="_err.input(alertForm, PlaceId)" #PlaceId="ngModel" required>
+                        </kendo-dropdownlist>
+                        <label *ngIf="_err.required(alertForm, PlaceId)" class="err-label">Please select a place on which you want to enable alert</label>
+                    </div>
+                </div>
+
+                <div class="row mt10">
+                    <div class="col-md-6">
+                        <div class=" panel panel-default">
+                            <div class="panel-heading" style="background-color: #e0e0e0;">
+                                Email Alert
+                            </div>
+                            <div class="panel-body">
+
+                                <label class="form-label" [ngClass]="alertForm.submitted && alertModel.UserIds.length + alertModel.UserSMSIds.length + alertModel.AdditionalEmail.length + alertModel.AdditionalPhone.length == 0 ? 'err-title' : ''">Recipients <span class="err-label">*</span></label>
+                                <label class="btn-vehicle" [ngClass]="alertModel.UserIds.length > 0 ? 'btn-orange':'btn-gray'" [popover]="userPopover">
+                                    {{(alertModel.UserIds.length > 0 ? alertModel.UserIds.length : '') + ' Select Users'}}
+                                </label>
+                                <label *ngIf="alertModel.UserIds.length > 0" class="btn-orange" (click)="userClearAll()" style="margin-left: -3px; cursor: pointer;">X</label>
+                                <label class="btn-gray text-center btn-vehicle-all" (click)="userSelectAll()">
+                                    Select All
+                                </label>
+                                <popover-content #userPopover title="Users" placement="bottom" [animation]="true" [closeOnClickOutside]="true" (onShown)="loadUserPopover=true">
+                                    <div *ngIf="loadUserPopover">
+                                        <input name="searchUser" class="form-control" placeholder="Search users..." [ngModel]="searchUserText" (ngModelChange)="userSearch($event)"
+                                        />
+                                        <div class="mt5 mb5"><b>Available users</b></div>
+                                        <div class="vehicle-list">
+                                            <div slimScroll height="100%" size="5px">
+                                                <li class="vehicle-box" [class.active]="user.checked" (click)="userChecked(user)" *ngFor="let user of filteredUsers">
+                                                    <i class="fa fa-check check" aria-hidden="true"></i>
+                                                    <strong>{{user.Name}}</strong>
+                                                    <br />
+                                                    <small>{{user.EmailAddress}}</small>
+                                                </li>
+                                                <div *ngIf="filteredUsers.length == 0 && allUsers.length != 0" style="margin: 10px auto;">
+                                                    No Users containing <b>{{searchUserText}}</b>
+                                                </div>
+                                                <div *ngIf="allUsers.length == 0" style="margin: 10px auto;">
+                                                    No Users found to display
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </popover-content>
+
+                                <label *ngIf="alertForm.submitted && alertModel.UserIds.length + alertModel.UserSMSIds.length + alertModel.AdditionalEmail.length + alertModel.AdditionalPhone.length == 0 "
+                                    class="err-label">At least one recipient/email/phone number must be added</label>
+                                <br/>
+
+
+                                <label class="form-label">Additional email recipients</label>
+                                <input class="form-control" type="email" name="Email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$" [ngClass]="_err.input(alertForm, Email)"
+                                    [(ngModel)]="additionalEmail" #Email="ngModel" />
+                                <label *ngIf="_err.pattern(alertForm, Email)" class="err-label">Email Address must be in email format</label>
+                                <input type="button" class="btn btn-default btn-gray" value="Add" (click)="addEmail()" [disabled]="_err.input(alertForm, Email)"
+                                />
+
+                                <ul class="additional-item">
+                                    <li *ngFor="let email of alertModel.AdditionalEmail; let i = index;">
+                                        {{email}}
+                                        <input type="button" class="btn btn-default btn-gray pull-right" value="×" (click)="removeEmail(i)" />
+                                        <div class="clearfix"></div>
+                                    </li>
+                                </ul>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class=" panel panel-default">
+                            <div class="panel-heading" style="background-color: #e0e0e0;">
+                                SMS Alert
+                            </div>
+                            <div class="panel-body">
+
+                                <label class="form-label" [ngClass]="alertForm.submitted && alertModel.UserIds.length + alertModel.UserSMSIds.length + alertModel.AdditionalEmail.length + alertModel.AdditionalPhone.length == 0 ? 'err-title' : ''">Recipients <span class="err-label">*</span></label>
+                                <label class="btn-vehicle" [ngClass]="alertModel.UserSMSIds.length > 0 ? 'btn-orange':'btn-gray'" [popover]="userSMSPopover">
+                                    {{(alertModel.UserSMSIds.length > 0 ? alertModel.UserSMSIds.length : '') + ' Select Users'}}
+                                </label>
+                                <label *ngIf="alertModel.UserSMSIds.length > 0" class="btn-orange" (click)="userSMSClearAll()" style="margin-left: -3px; cursor: pointer;">X</label>
+                                <label class="btn-gray text-center btn-vehicle-all" (click)="userSMSSelectAll()">
+                                    Select All
+                                </label>
+                                <popover-content #userSMSPopover title="Users" placement="bottom" [animation]="true" [closeOnClickOutside]="true" (onShown)="loadUserSMSPopover=true">
+                                    <div *ngIf="loadUserSMSPopover">
+                                        <input name="searchUser" class="form-control" placeholder="Search users..." [ngModel]="searchUserSMSText" (ngModelChange)="userSMSSearch($event)"
+                                        />
+                                        <div class="mt5 mb5"><b>Available users</b></div>
+                                        <div class="vehicle-list">
+                                            <div slimScroll height="100%" size="5px">
+                                                <li class="vehicle-box" [class.active]="userSMS.checked" (click)="userSMSChecked(userSMS)" *ngFor="let userSMS of filteredUsersSMS">
+                                                    <i class="fa fa-check check" aria-hidden="true"></i>
+                                                    <strong>{{userSMS.Name}}</strong>
+                                                    <br />
+                                                    <small>{{userSMS.PhoneNumber}}</small>
+                                                </li>
+                                                <div *ngIf="filteredUsersSMS.length == 0 && allUsersSMS.length != 0" style="margin: 10px auto;">
+                                                    No Users containing <b>{{searchUserSMSText}}</b>
+                                                </div>
+                                                <div *ngIf="allUsersSMS.length == 0" style="margin: 10px auto;">
+                                                    No Users found to display
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </popover-content>
+
+                                <label *ngIf="alertForm.submitted && alertModel.UserIds.length + alertModel.UserSMSIds.length + alertModel.AdditionalEmail.length + alertModel.AdditionalPhone.length == 0 "
+                                    class="err-label">At least one recipient/email/phone number must be added</label>
+                                <br/>
+                                <label class="form-label">Additional Phone number recipients</label>
+                                <kendo-dropdownlist class="form-control pull-left" style="width:200px;" [data]="countryList" textField="Name" valueField="Id"
+                                    name="Country" [defaultItem]="{ Name: 'Select Country', Id: null }" [(ngModel)]="additionalCountry"
+                                    [valuePrimitive]="true" #Country="ngModel">
+                                </kendo-dropdownlist>
+                                <input class="form-control" type="phone" name="Phone" [(ngModel)]="additionalPhone" #Phone="ngModel" />
+                                <input type="button" class="btn btn-default btn-gray" value="Add" (click)="addPhone()" />
+
+                                <ul class="additional-item">
+                                    <li *ngFor="let phone of alertModel.AdditionalPhone; let i = index;">
+                                        ({{phone.CountryCode}}) {{phone.PhoneNumber}}
+                                        <input type="button" class="btn btn-default btn-gray pull-right" value="×" (click)="removePhone(i)" />
+                                        <div class="clearfix"></div>
+                                    </li>
+                                </ul>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <label class="form-label" for="chkTemporary">Temporary</label>
+                <input type="checkbox" name="chkTemporary" id="chkTemporary" value="" [(ngModel)]="alertModel.IsTemporary" #chkTemporary="ngModel">
+
+                <div *ngIf="alertModel.IsTemporary" class="row mt20">
+                    <div class="col-md-6">
+                        <label class="form-label pull-left mr10">Start date:</label>
+                        <md2-datepicker name="startDate" #startDate="ngModel" [(ngModel)]="alertModel.TempStartDate" type="date" format="dd MMMM y"
+                            [ngClass]="_err.input(alertForm, startDate)" openOnFocus="true"></md2-datepicker>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label pull-left mr10">End date</label>
+                        <md2-datepicker name="endDate" #endDate="ngModel" [(ngModel)]="alertModel.TempEndDate" type="date" format="dd MMMM y" [ngClass]="_err.input(alertForm, endDate)"
+                            openOnFocus="true"></md2-datepicker>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-1 text-right">
+                        <label class="form-label" [ngClass]="alertForm.submitted && !alertModel.IsTemporary && daysOfWeek.length == 0 ? 'err-title' : ''">Days</label>
+                    </div>
+
+                    <div class="col-md-11">
+                        <div class="btn-week-group btn-group-justified">
+                            <label class="btn btn-week active"> 
+                                <input type="checkbox" class="hidden" name="daysOfWeek" id="mon" (change)="daysOfWeekChange($event)" value="1">
+                                <i class="fa fa-check" aria-hidden="true"></i> Monday
+                            </label>
+                            <label class="btn btn-week active">
+                                <input type="checkbox" class="hidden" name="daysOfWeek" id="tue" (change)="daysOfWeekChange($event)" value="2">
+                                <i class="fa fa-check" aria-hidden="true"></i> Tuesday
+                              </label>
+                            <label class="btn btn-week active">
+                                <input type="checkbox" class="hidden" name="daysOfWeek" id="wed" (change)="daysOfWeekChange($event)" value="3"> 
+                                <i class="fa fa-check" aria-hidden="true"></i> Wednesday
+                              </label>
+                            <label class="btn btn-week active">
+                                <input type="checkbox" class="hidden" name="daysOfWeek" id="thr" (change)="daysOfWeekChange($event)" value="4"> 
+                                <i class="fa fa-check" aria-hidden="true"></i> Thursday
+                              </label>
+                            <label class="btn btn-week active">
+                                <input type="checkbox" class="hidden" name="daysOfWeek" id="fri" (change)="daysOfWeekChange($event)" value="5"> 
+                                <i class="fa fa-check" aria-hidden="true"></i> Friday
+                              </label>
+                            <label class="btn btn-week active">
+                                <input type="checkbox" class="hidden" name="daysOfWeek" id="sat" (change)="daysOfWeekChange($event)" value="6"> 
+                                <i class="fa fa-check" aria-hidden="true"></i> Saturday
+                              </label>
+                            <label class="btn btn-week active">
+                                <input type="checkbox" class="hidden" name="daysOfWeek" id="sun" (change)="daysOfWeekChange($event)" value="0"> 
+                                <i class="fa fa-check" aria-hidden="true"></i> Sunday
+                              </label>
+
+
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <label *ngIf="alertForm.submitted && !alertModel.IsTemporary && daysOfWeek.length == 0" class="err-label">At least one day must be selected</label>
+                <br />
+
+                <div class="row mt20">
+                    <div class="col-md-6">
+                        <label class="form-label pull-left mr10">From</label>
+                        <kendo-dropdownlist class="form-control pull-left" style="width:200px;" [data]="fromTimeList" textField="text" valueField="value"
+                            name="FromTime" [defaultItem]="{ text: 'Any time', value: null }" [(ngModel)]="alertModel.FromTime"
+                            [valuePrimitive]="true" #FromTime="ngModel">
+                        </kendo-dropdownlist>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label pull-left mr10">To</label>
+                        <kendo-dropdownlist class="form-control pull-left" style="width:200px;" [data]="toTimeList" textField="text" valueField="value"
+                            name="ToTime" [defaultItem]="{ text: 'Any time', value: null }" [(ngModel)]="alertModel.ToTime" [valuePrimitive]="true"
+                            #ToTime="ngModel">
+                        </kendo-dropdownlist>
+                    </div>
+                </div>
+
+                <div class="clearfix mt10"></div>
+
+                <input type="submit" class="btn btn-default btn-orange" [value]="loadingSave ? 'Please wait...' :'Create alert'" [disabled]="loadingSave"
+                />
+
+                <div class="clearfix mb30"></div>
+            </form>
+        </div>
+    </div>
+</div>

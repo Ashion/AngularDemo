@@ -1,0 +1,338 @@
+<div class="content-breadcrumb">
+  <ul class="breadcrumb-box">
+    <li><a href="#">Settings</a></li>
+    <li><a href="#">Manage Clients</a></li>
+    <li>{{ paramId == 'new' ? 'Add Client' : 'Modify Client' }}</li>
+  </ul>
+</div>
+<div class="content-box">
+  <form name="form" (ngSubmit)="clientForm.form.valid && save()" #clientForm="ngForm" novalidate>
+    <kendo-tabstrip (tabSelect)="onTabSelected($event)">
+      <kendo-tabstrip-tab [title]="'General'" [selected]="!IsSelected">
+        <ng-template kendoTabContent>
+          <div class="form-horizontal">
+            <div class="form-group">
+              <div class="col-sm-3 client-box">
+                <label class="control-label" [ngClass]="(clientForm.submitted || Name.dirty) && Name.invalid ? 'err-title':''">Client Name <span class="err-label">*</span></label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="Name" required maxlength="1000" [ngStyle]="changeClientInputStyle()" (blur)="verifyClientName($event)"
+                    [(ngModel)]="model.Name" #Name="ngModel" [ngClass]="(clientForm.submitted || Name.dirty) && Name.invalid ? 'err-input':''"
+                  />
+                  <span *ngIf="isDuplicateClient==false"><i class="fa fa-check item-available"></i></span>
+                  <span *ngIf="isDuplicateClient==true"><i class="fa fa-times item-not-available"></i></span>
+                </div>
+                <label *ngIf="(clientForm.submitted || Name.dirty) && Name.errors && Name.errors['required']" class="err-label">Please enter Client Name</label>
+                <label *ngIf="!((clientForm.submitted || Name.dirty) && Name.errors && Name.errors['required']) && isDuplicateClient == true"
+                  class="err-label">Client Name is already exist</label>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Client Type</label>
+                <kendo-dropdownlist class="form-control" [data]="clientTypeData" (valueChange)="onClientChange($event)" (selectionChange)="onClientChange($event)"
+                  [textField]=" 'Name' " [valueField]=" 'Id' " [defaultItem]="defaultItemClient" [(value)]="clientValue">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-sm-3 client-box" *ngIf="showElement">
+                <label class="control-label" [ngClass]="(clientForm.submitted || FirstName.dirty) && FirstName.invalid ? 'err-title':''">First Name <span class="err-label">*</span></label>
+                <input class="form-control" name="FirstName" [(ngModel)]="model.FirstName" #FirstName="ngModel" maxlength="50" [ngClass]="(clientForm.submitted || FirstName.dirty) && FirstName.invalid ? 'err-input':''"
+                  required/>
+                <label *ngIf="(clientForm.submitted || FirstName.dirty) && FirstName.errors && FirstName.errors['required']" class="err-label">Please enter First Name</label>
+              </div>
+              <div class="col-sm-3 client-box" *ngIf="showElement">
+                <label class="control-label" [ngClass]="(clientForm.submitted || LastName.dirty) && LastName.invalid ? 'err-title':''">Last Name <span class="err-label">*</span></label>
+                <input class="form-control" name="LastName" [(ngModel)]="model.LastName" #LastName="ngModel" maxlength="50px" [ngClass]="(clientForm.submitted || LastName.dirty) && LastName.invalid ? 'err-input':''"
+                  required />
+                <label *ngIf="(clientForm.submitted || LastName.dirty) && LastName.errors && LastName.errors['required']" class="err-label">Please enter Last Name</label>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Address</label>
+                <input class="form-control" name="Address" [(ngModel)]="model.Address" #Address="ngModel" maxlength="250px" />
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">City</label>
+                <input name="City" class="form-control" name="City" [(ngModel)]="model.City" #City="ngModel" maxlength="50px" />
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">State</label>
+                <input name="State" class="form-control" [(ngModel)]="model.State" #State="ngModel" maxlength="50px" />
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Postcode</label>
+                <input name="Postcode" class="form-control" [(ngModel)]="model.Postcode" #Postcode="ngModel" maxlength="10px" />
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Country</label>
+                <kendo-dropdownlist class="form-control" [data]="countryData" [filterable]="true" (valueChange)="onCountryChange($event)"
+                  (selectionChange)="onCountryChange($event)" (filterChange)="countryFilterChange($event)" [textField]=" 'Name' "
+                  [valueField]=" 'Id' " [defaultItem]="defaultItemCountry " [(value)]="countryValue">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-sm-3 client-box" *ngIf="showElement">
+                <label class="control-label" [ngClass]="(clientForm.submitted || Username.dirty) && Username.invalid ? 'err-title':''">User Name <span class="err-label">*</span></label>
+                <input type="email" class="form-control" name="Username" [(ngModel)]="model.Username" #Username="ngModel" required maxlength="256"
+                  pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" [ngClass]="(clientForm.submitted || Username.dirty) && Username.invalid ? 'err-input':''"
+                />
+                <label *ngIf="(clientForm.submitted || Username.dirty) && Username.errors && Username.errors['required']" class="err-label">Please enter User Name</label>
+                <label *ngIf="(clientForm.submitted || Username.dirty) && Username.errors && Username.errors['pattern']" class="err-label">User Name must be in email format</label>
+              </div>
+              <div class="col-sm-3 client-box" *ngIf="showElement">
+                <label class="control-label" [ngClass]="(clientForm.submitted || Password.dirty) && Password.invalid ? 'err-title':''">Password <span class="err-label">*</span></label>
+                <input type="password" class="form-control" minlength="6" maxlength="50" name="Password" [(ngModel)]="model.Password" #Password="ngModel"
+                  required validateEqual="ConfirmPassword" reverse="true" [ngClass]="(clientForm.submitted || Password.dirty) && Password.invalid ? 'err-input':''"
+                />
+                <label *ngIf="(clientForm.submitted || Password.dirty) && Password.errors && Password.errors['required']" class="err-label">Please enter Password</label>
+                <label *ngIf="(clientForm.submitted || Password.dirty) && Password.errors && Password.errors['minlength']" class="err-label">Password must be at least 6 characters.</label>
+              </div>
+              <div class="col-sm-3 client-box" *ngIf="showElement">
+                <label class="control-label" [ngClass]="(clientForm.submitted || ConfirmPassword.dirty) && ConfirmPassword.invalid ? 'err-title':''">Confirm Password <span class="err-label">*</span></label>
+                <input type="password" class="form-control" minlength="6" maxlength="50" name="ConfirmPassword" [(ngModel)]="model.ConfirmPassword"
+                  #ConfirmPassword="ngModel" required validateEqual="Password" reverse="false" [ngClass]="(clientForm.submitted || ConfirmPassword.dirty) && ConfirmPassword.invalid ? 'err-input':''"
+                />
+                <label *ngIf="(clientForm.submitted || ConfirmPassword.dirty) && ConfirmPassword.invalid" class="err-label ">Password mismatch</label>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Activation Date</label>
+                <kendo-datepicker [format]="'dd-MMM-yyyy'" class="form-control" [(value)]="clientModel.ActivationDate" name="ActivationDate"
+                  [(ngModel)]="model.ActivationDate" #dtpActivation="ngModel"></kendo-datepicker>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Deactivation Date</label>
+                <kendo-datepicker [format]="'dd-MMM-yyyy'" class="form-control" [(value)]="clientModel.DeactivationDate" name="DeactivationDate"
+                  [(ngModel)]="model.DeactivationDate" #dtpDeactivation="ngModel"></kendo-datepicker>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Website</label>
+                <input class="form-control" name="Website" [(ngModel)]="model.Website" #Website="ngModel" maxlength="100px" />
+              </div>
+              <div class="col-sm-3 client-box ">
+                <label class="control-label" [ngClass]="(clientForm.submitted || EmailAddress.dirty) && EmailAddress.invalid ? 'err-title':''">Email Address <span class="err-label">*</span></label>
+                <input class="form-control" type="email" name="EmailAddress" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" [ngClass]="(clientForm.submitted || EmailAddress.dirty) && EmailAddress.invalid ? 'err-input':''"
+                  [(ngModel)]="model.EmailAddress" required #EmailAddress="ngModel" />
+                <label *ngIf="(clientForm.submitted || EmailAddress.dirty) && EmailAddress.errors && EmailAddress.errors['required']" class="err-label">Please enter Email Address</label>
+                <label *ngIf="(clientForm.submitted || EmailAddress.dirty) && EmailAddress.errors && EmailAddress.errors['pattern']" class="err-label">Email Address must be in email format</label>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Max User</label><br>
+                <kendo-numerictextbox class="form-control" name="MaxUser" [value]="value" [min]="0" [max]="100" [autoCorrect]="autoCorrect"
+                  [format]=" '0' " [(ngModel)]="model.MaxUser" #MaxUser="ngModel">
+                </kendo-numerictextbox>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Max Geofence</label><br>
+                <kendo-numerictextbox class="form-control" name="MaxGeofence" [value]="value" [min]="0" [max]="100" [autoCorrect]="autoCorrect"
+                  [format]=" '0' " [(ngModel)]="model.MaxGeofence" #MaxGeofence="ngModel">
+                </kendo-numerictextbox>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Max Group</label><br>
+                <kendo-numerictextbox class="form-control" [value]="value" name="MaxGroup" [min]="0" [max]="100" [autoCorrect]="autoCorrect"
+                  [format]=" '0' " [(ngModel)]="model.MaxGroup" #MaxGroup="ngModel">
+                </kendo-numerictextbox>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Max Asset</label><br>
+                <kendo-numerictextbox class="form-control" [value]="value" name="MaxAsset" [min]="0 " [max]="100" [autoCorrect]="autoCorrect"
+                  [format]=" '0' " [(ngModel)]="model.MaxAsset" #MaxAsset="ngModel">
+                </kendo-numerictextbox>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Max Individual</label><br>
+                <kendo-numerictextbox class="form-control" [value]="value" name="MaxIndividual" [min]="0 " [max]="100" [autoCorrect]="autoCorrect"
+                  [format]=" '0' " [(ngModel)]="model.MaxIndividual" #MaxIndividual="ngModel">
+                </kendo-numerictextbox>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Max Vehicle</label><br>
+                <kendo-numerictextbox class="form-control" [value]="value" name="MaxVehicle" [min]="0 " [max]="100" [autoCorrect]="autoCorrect"
+                  [format]=" '0' " [(ngModel)]="model.MaxVehicle" #MaxVehicle="ngModel">
+                </kendo-numerictextbox>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Phone</label>
+                <input class="form-control" name="PhoneNumber" [(ngModel)]="model.PhoneNumber" #PhoneNumber="ngModel" maxlength="50px" />
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Fax</label>
+                <input class="form-control" name="FaxNumber" [(ngModel)]="model.FaxNumber" #FaxNumber="ngModel" maxlength="50px" />
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Upload Logo</label>
+                <app-upload class="upload-img" (uploadFile)="onSelectFile($event)" (removeFile)="onRemoveFile($event)" [fileObj]="logoFile"></app-upload>
+              </div>
+            </div>
+
+          </div>
+          <div class="btn-box" *ngIf="!IsCreatePage">
+            <button type="button" class="btn btn-default btn-gray" (click)="onCancleClick()">Cancel</button>
+            <button type="submit" class="btn btn-default btn-orange">{{buttonValue}}</button>
+          </div>
+        </ng-template>
+      </kendo-tabstrip-tab>
+      <kendo-tabstrip-tab [title]="'Assignment'" [selected]="IsSelected">
+        <ng-template kendoTabContent>
+          <div class="top-button-main pl0 pr0">
+            <div class="top-filter pull-left">
+              <form name="form" (ngSubmit)="addFilter()" #f="ngForm" class="form-inline" novalidate>
+                <div class="form-group">
+                  <label class="control-label-top">Select Column</label>
+                  <kendo-dropdownlist name="ddlFilter" class="form-control" [data]="filterDataSource" [(ngModel)]="model.ddlFilter" #ddlFilter="ngModel"
+                    [textField]="'Name'" [valueField]="'Id'"></kendo-dropdownlist>
+                </div>
+                <div class="form-group">
+                  <label class="control-label-top">Search</label>
+                  <input type="text" name="searchText" class="form-control k-textbox" placeholder="All" [(ngModel)]="model.searchText" #searchText="ngModel"
+                  />
+                </div>
+                <button class="btn btn-gray ml5" kendoButton>Add Filter</button>
+              </form>
+            </div>
+          </div>
+          <div class="full-width">
+            <div class="grid-filter full-width">
+              <div *ngFor="let item of filterText">
+                <span *ngIf="item.Id!=''">{{item.Id }} : &nbsp;  {{item.Name }}
+                <a (click)="onCancelClick(item.Id)" >x</a></span>
+              </div>
+            </div>
+            <kendo-grid [data]="profileGridView " [sort]="kgSort" [scrollable]="'virtual'" [rowHeight]="35" [height]="150" [sortable]="{
+            allowUnsort: true,
+            mode: 'multiple' 
+            }" (dataStateChange)="stateChange($event)" (sortChange)="sortProfileChange($event)">
+              <kendo-grid-column title="Action" width="110px ">
+                <ng-template kendoGridCellTemplate let-dataItem>
+                  <input type="checkbox" [disabled]="dataItem.TotalNoDevice > 0" [(ngModel)]="dataItem.IsSelected" [ngModelOptions]="{standalone: true}"
+                  />
+                </ng-template>
+              </kendo-grid-column>
+              <kendo-grid-column field="ProfileName" title="Profile Name"></kendo-grid-column>
+              <kendo-grid-column field="ProtocolName" title="Protocol"></kendo-grid-column>
+              <kendo-grid-column field="PortNumber" title="Port"></kendo-grid-column>
+              <kendo-grid-column field="ParserName" title="Parser"></kendo-grid-column>
+              <kendo-grid-column field="Description" title="Description"></kendo-grid-column>
+              <kendo-grid-column field="TotalNoDevice" title="Total Device"></kendo-grid-column>
+            </kendo-grid>
+            <div class="btn-box mt15">
+              <button type="button" class="btn btn-default btn-gray" (click)="onCancleClick();">Cancel</button>
+              <button type="button" class="btn btn-default btn-orange" (click)="assignmentSave();">Save</button>
+            </div>
+          </div>
+        </ng-template>
+      </kendo-tabstrip-tab>
+      <kendo-tabstrip-tab [title]="'Security'" [disabled]="IsDisable">
+        <ng-template kendoTabContent>
+          <div *ngIf="!IsCreatePage">
+            <div class="top-filter pull-right">
+              <button type="button" class="btn btn-default btn-orange" (click)="NewRoleGridData()">Create New Role</button>
+              <!-- <button type="button" class="btn btn-default btn-orange" data-toggle="modal" data-target="#myModal">Assign Role from Base</button> -->
+            </div>
+            <div class="grid-main p0 mt15 full-width">
+              <div class="grid-box full-width">
+                <kendo-grid [data]="gridView" [pageSize]="pageSize" [skip]="skip" [pageable]="true" (pageChange)="pageChange($event)" [sortable]="{
+            allowUnsort: allowUnsort,
+            mode: multiple ? 'multiple' : 'single'
+            }" [sort]="sort" (sortChange)="sortChange($event)" (edit)="editHandler($event)" (remove)="removeHandler($event)">
+                  <kendo-grid-column field="Name" title="Role Name" width="120px"></kendo-grid-column>
+                  <kendo-grid-column field="Users" title="Users" width="100"></kendo-grid-column>
+                  <kendo-grid-column field="Permissions" title="Permissions" width="100"></kendo-grid-column>
+                  <kendo-grid-column field="BaseRole" title="Base Role" width="100px"></kendo-grid-column>
+                  <kendo-grid-command-column title="Action " width="110px ">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                      <img width="12px " class="k-grid-action-btn" kendoGridEditCommand src="assets/images/edit-icon.png " alt="Edit " />
+                      <img width="12px " class="k-grid-action-btn" kendoGridRemoveCommand src="assets/images/delete-icon.png
+                " title="Delete Security Role " alt="Delete " />
+                      <img width="20px " class="k-grid-action-btn k-button k-grid-edit-command " src="assets/images/{{ (dataItem.IsActive)
+                ? 'Active': 'Inactive' }}.png " title="Active/Inactive SecurityRole " alt="dataItem.IsActive " (click)="securityRoleActivation(dataItem.SecurityRoleId, dataItem.IsActive) "
+                      />
+                    </ng-template>
+                  </kendo-grid-command-column>
+                </kendo-grid>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="IsCreatePage">
+            <form name="form1" (ngSubmit)="roleForm.form.valid && saveRole()" #roleForm="ngForm" novalidate>
+              <div class="form-horizontal">
+                <div class="form-group mb0">
+                  <div class="col-sm-3 client-box">
+                    <label class="control-label">Role</label>
+                    <div class="fa-input">
+                      <input name="roleName" [(ngModel)]="roleName" #RoleName="ngModel" class="form-control" maxlength="50" required />
+                      <div class="err-label" *ngIf="roleForm.submitted && RoleName.errors && RoleName.errors.required">
+                        Please enter Role
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-3 client-box">
+                    <label class="control-label">Base Client Role</label>
+                    <kendo-dropdownlist class="form-control " [data]="baseClientRole " (valueChange)="onBaseClientRoleChange($event) " [textField]="'Name'"
+                      [valueField]="'Id'" [defaultItem]="defaultBaseClientRole" [value]="baseClientRoleValue">
+                    </kendo-dropdownlist>
+                  </div>
+                </div>
+              </div>
+              <!-- div class="col-md-3 client-box">
+                <div class="col-md-12 client-box">
+                  <label class="control-label ">Role</label>
+                  <input name="roleName" [(ngModel)]="roleName" #RoleName="ngModel" class="form-control" maxlength="50" required />
+                  <div class="err-label" *ngIf="roleForm.submitted && RoleName.errors && RoleName.errors.required">
+                    Please enter Role
+                  </div>
+                </div>
+                <div class="col-md-12 client-box">
+                  <label class="control-label">Base Client Role</label>
+                  <kendo-dropdownlist class="form-control " [data]="baseClientRole " (valueChange)="onBaseClientRoleChange($event) " [textField]="'Name'"
+                    [valueField]="'Id'" [defaultItem]="defaultBaseClientRole" [value]="baseClientRoleValue">
+                  </kendo-dropdownlist>
+                </div>
+              </div -->
+              <div class="full-width">
+                <kendo-grid [data]="editRoleGridView" [pageSize]="newRoleGridPageSize" [skip]="newRoleGridSkip" [pageable]="true" (pageChange)="pageChange($event)">
+                  <ng-template ngFor [ngForOf]="privilegColumns" let-column>
+                    <kendo-grid-column field="{{column.Name}}" width="120px">
+                      <ng-template kendoGridCellTemplate *ngIf="column.Name !='Name'" let-dataItem>
+                        <input type="checkbox" [name]="dataItem[column.Name]" [(ngModel)]="dataItem[column.Name]" [ngModelOptions]="{standalone: true}">
+                      </ng-template>
+                    </kendo-grid-column>
+                  </ng-template>
+                </kendo-grid>
+              </div>
+              <div class="btn-box">
+                <button type="button" class="btn btn-default btn-gray" (click)="resetSecurityTab(); IsCreatePage=false">Cancel</button>
+                <button type="submit" class="btn btn-default btn-orange">{{buttonValue}}</button>
+              </div>
+            </form>
+          </div>
+        </ng-template>
+      </kendo-tabstrip-tab>
+    </kendo-tabstrip>
+  </form>
+</div>
+
+<!-- <div class="modal fade" id="myModal" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Assign Role from Base</h4>
+      </div>
+      <div class="modalbody">
+        <h5>Unassign</h5>
+        <div style="margin-left: 20px; border-style: solid;border-color: RED;width: 200px;height: 50px;">
+          <div style="width: 200px;height: 50px;" id="Unassign" [dragula]='"bag-one"' [dragulaModel]='UnassignList' [dragulaOptions]="options">
+            <div *ngFor="let item of UnassignList">{{item.RoleName}}</div>
+          </div>
+        </div>
+        <br>
+        <h5> Assign</h5>
+        <div style="margin-left: 20px; border-style: solid;border-color: RED;width: 200px;height: 50px;">
+          <div style="width: 200px;height: 50px;" id="Assign" [dragula]='"bag-one"' [dragulaModel]='AssignList' [dragulaOptions]="options">
+            <div *ngFor="let item of AssignList">{{item.RoleName}}</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-gray" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-default btn-orange" (click)="OnAssignRole()" data-dismiss="modal">Assign</button>
+      </div>
+    </div>
+  </div>
+</div> -->

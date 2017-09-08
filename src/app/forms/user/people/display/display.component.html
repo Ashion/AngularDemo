@@ -1,0 +1,64 @@
+<div class="content-wrapper pl0">
+  <div class="top-button-main p15">
+
+    <div class="top-button-right pull-right">
+      <div class="top-filter pull-left">
+        <input type="text" placeholder="Search People..." name="searchText" class="form-control k-textbox" value="filterText" [(ngModel)]="filterText"
+          (keyup)="fileter()" />
+      </div>
+      <!-- <button class="btn btn-orange pull-right ml10" kendoButton (click)="addPeople()">+ Add People</button> -->
+      <button class="btn btn-orange pull-right ml10" kendoButton (click)="router.navigate(['/user/people/new'])">+ Add People</button>
+    </div>
+  </div>
+  <div class="grid-main p15 full-width">
+    <div class="grid-box full-width">
+      <kendo-grid [data]="kgDataSource | async" [pageSize]="kgPageSize" (pageChange)="pageChange($event)" [skip]="kgSkip" [pageable]="true"
+        [sort]="kgSort" [sortable]="{
+            allowUnsort: true,
+            mode: 'multiple'
+            }" (dataStateChange)="onStateChange($event)" (edit)="editHandler($event)" (remove)="removeHandler($event)" (sortChange)="sortChange($event)">
+
+        <kendo-grid-column title="" width="50px">
+          <ng-template kendoGridCellTemplate let-dataItem>
+            <div *ngIf="(dataItem.Photo == null)" class="no-user-image">
+              {{(dataItem.FirstName.substring(0, 1)).toUpperCase()+(dataItem.LastName.substring(0, 1)).toUpperCase() }}
+            </div>
+            <div *ngIf="(dataItem.Photo != null)">
+              <img class="person-image" src="{{filePath + dataItem.Photo.FileAccessUrl}}" title="Person Image" />
+            </div>
+          </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="Name" title="Name" width="160px"></kendo-grid-column>
+        <kendo-grid-column field="LicenseNumber" title="Driver License" width="150px"></kendo-grid-column>
+        <kendo-grid-column field="TagCode" title="Driver Tag" width="150px"></kendo-grid-column>
+        <kendo-grid-column field="EmailAddress" title="Email" width="190px">
+          <ng-template kendoGridCellTemplate let-dataItem>
+            <a href="mailto:{{ dataItem.EmailAddress}}"> {{ dataItem.EmailAddress}}</a>
+          </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="SecurityRole.Name" title="Security Role" width="130px"></kendo-grid-column>
+        <kendo-grid-column field="IsClientAdmin" title="Client Admin" width="110px">
+          <ng-template kendoGridCellTemplate let-dataItem>
+            {{ (dataItem.IsClientAdmin ? "Yes " : "No ") }}
+          </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="LastLogin" title="Last Login" width="120px"></kendo-grid-column>
+        <kendo-grid-column field="IsActive" title="Status" width="70px">
+          <ng-template kendoGridCellTemplate let-dataItem>
+            {{ (dataItem.IsActive ? "Active " : "Inactive ") }}
+          </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-command-column title="Action" width="110px">
+          <ng-template kendoGridCellTemplate let-dataItem>
+            <img width="12px" class="k-grid-action-btn" kendoGridEditCommand src="assets/images/edit-icon.png" alt="Edit" />
+            <img width="12px" class="k-grid-action-btn" kendoGridRemoveCommand src="assets/images/delete-icon.png
+                " title="Delete Client" alt="Delete " />
+            <img width="20px" class="k-grid-action-btn k-button k-grid-edit-command" src="assets/images/{{ (dataItem.IsActive)
+                ? 'Active': 'Inactive' }}.png" title="Active/Inactive People" alt="dataItem.IsActive" (click)="peopleActivation(dataItem.PeopleId, dataItem.IsActive)"
+            />
+          </ng-template>
+        </kendo-grid-command-column>
+      </kendo-grid>
+    </div>
+  </div>
+</div>

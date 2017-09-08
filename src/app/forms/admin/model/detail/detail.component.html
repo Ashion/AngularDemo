@@ -1,0 +1,62 @@
+<div class="content-breadcrumb">
+  <ul class="breadcrumb-box">
+    <li><a href="#">Manage Device Inventory</a></li>
+    <li><a routerLink="/admin/tools/model">Model</a></li>
+    <li>{{ paramId == 'new' ? 'Add Model' : 'Modify Model' }}</li>
+  </ul>
+</div>
+<div class="content-box">
+  <form name="form" (ngSubmit)="modelForm.form.valid && save()" #modelForm="ngForm" novalidate>
+    <div class="form-horizontal">
+      <div class="form-group">
+        <div class="col-sm-3 client-box">
+          <label class="control-label" [ngClass]="(modelForm.submitted || Name.dirty) && Name.invalid ? 'err-title':''">Model Name <span class="err-label">*</span></label>
+          <div class="fa-input">
+            <input type="text" class="form-control" name="Name" required maxlength="100" [ngStyle]="changeModelInputStyle()" (blur)="verifyModelName($event)"
+              [(ngModel)]="model.Name" #Name="ngModel" [ngClass]="(modelForm.submitted || Name.dirty) && Name.invalid ? 'err-input':''"
+            />
+            <span *ngIf="isDuplicateModel==false"><i class="fa fa-check item-available"></i></span>
+            <span *ngIf="isDuplicateModel==true"><i class="fa fa-times item-not-available"></i></span>
+          </div>
+          <label *ngIf="(modelForm.submitted || Name.dirty) && Name.errors && Name.errors['required']" class="err-label">Please enter Model Name</label>
+          <label *ngIf="!((modelForm.submitted || Name.dirty) && Name.errors && Name.errors['required']) && isDuplicateModel == true"
+            class="err-label">Model Name is already exist</label>
+        </div>
+        <div class="col-sm-3 client-box">
+          <label class="control-label">Manufacturer</label>
+          <kendo-dropdownlist class="form-control" [data]="manufacturerData" (valueChange)="onManufacturerChange($event)" (selectionChange)="onManufacturerChange($event)"
+            [textField]=" 'Name' " [valueField]=" 'Id' " [defaultItem]="defaultItemManufacturer" [(value)]="manufacturerValue">
+          </kendo-dropdownlist>
+        </div>
+        <div class="col-sm-3 client-box">
+          <label class="control-label">Model Type</label>
+          <kendo-dropdownlist class="form-control" [data]="modelTypeData" (valueChange)="onModelTypeChange($event)" (selectionChange)="onModelTypeChange($event)"
+            [textField]=" 'Name' " [valueField]=" 'Id' " [defaultItem]="defaultItemModelType" [(value)]="modelTypeValue">
+          </kendo-dropdownlist>
+        </div>
+        <div class="col-sm-3 client-box">
+          <label class="control-label">Product URL</label>
+          <input type="text" class="form-control" name="ProductUrl" [(ngModel)]="model.ProductUrl" #ProductUrl="ngModel" maxlength="250px"
+          />
+        </div>
+        <div class="col-sm-3 client-box">
+          <label class="control-label">Upload Image</label>
+          <app-upload class="upload-img" (uploadFile)="onSelectFile($event)" (removeFile)="onRemoveFile($event)" [fileObj]="logoFile"></app-upload>
+        </div>
+        <div class="col-sm-3 client-box">
+          <label class="control-label">Gateway Name</label>
+          <input class="form-control" name="GatewayName" [(ngModel)]="model.GatewayName" #GatewayName="ngModel" maxlength="50px" />
+        </div>
+        <div class="col-sm-3 client-box">
+          <label class="control-label">Gateway Password</label>
+          <input class="form-control" name="GatewayPassword" [(ngModel)]="model.GatewayPassword" #GatewayPassword="ngModel" maxlength="50px"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="btn-box">
+      <button type="button" class="btn btn-default btn-gray" routerLink="/admin/tools/model">Cancel</button>
+      <button type="submit" class="btn btn-default btn-orange">Save</button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,212 @@
+<div class="content-breadcrumb">
+  <ul class="breadcrumb-box">
+    <li><a href="#">Manage Device Inventory</a></li>
+    <li><a routerLink="/admin/tools/device">Device</a></li>
+    <li>{{ paramId == 'new' ? 'Add Device' : 'Modify Device' }}</li>
+  </ul>
+</div>
+<div class="content-box">
+  <form name="form" (ngSubmit)="deviceForm.form.valid && save()" #deviceForm="ngForm" novalidate>
+    <kendo-tabstrip>
+      <kendo-tabstrip-tab [title]="'Device'" [selected]="IsSelected">
+        <ng-template kendoTabContent>
+          <div class="form-horizontal">
+            <div class="form-group">
+              <div class="col-sm-3 client-box">
+                <label class="control-label" [ngClass]="(deviceForm.submitted || Imei.dirty) && Imei.invalid ? 'err-title':''">IMEI<span class="err-label">*</span></label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="Imei" required maxlength="50" (keypress)="imeiKeyPress($event)" [(ngModel)]="model.Imei"
+                    #Imei="ngModel" [ngClass]="(deviceForm.submitted || Imei.dirty) && Imei.invalid ? 'err-input':''" [ngStyle]="changeImeiInputStyle()"
+                    (blur)="verifyImei($event)" />
+                  <span *ngIf="isDuplicateImei==false"><i class="fa fa-check item-available"></i></span>
+                  <span *ngIf="isDuplicateImei==true"><i class="fa fa-times item-not-available"></i></span>
+                </div>
+                <label *ngIf="(deviceForm.submitted || Imei.dirty) && Imei.errors && Imei.errors['required']" class="err-label">Please enter IMEI</label>
+                <label *ngIf="!((deviceForm.submitted || Imei.dirty) && Imei.errors && Imei.errors['required']) && isDuplicateImei == true"
+                  class="err-label">IMEI is already exist</label>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label" [ngClass]="(deviceForm.submitted && (model.Models==null || model.Models.RoleId==null)) ? 'err-title':''">Model<span class="err-label">*</span></label>
+                <kendo-dropdownlist class="form-control" [data]="modelData" [filterable]="true" (filterChange)="FilterChange($event,'model')"
+                  [textField]=" 'RoleName' " [ngClass]="(deviceForm.submitted && (model.Models==null || model.Models.RoleId==null)) ? 'err-input':''"
+                  [valueField]=" 'RoleId' " [defaultItem]="{ RoleName: 'Select Model', RoleId: null, IsPeopleAssign: false }"
+                  [(value)]="model.Models">
+                </kendo-dropdownlist>
+                <label *ngIf="(deviceForm.submitted && (model.Models==null || model.Models.RoleId==null))" class="err-label">Please select Model</label>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">SIM ID</label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="SimId" maxlength="50" [(ngModel)]="model.SimId" #SimId="ngModel" [ngStyle]="changeSimIdInputStyle()"
+                    (blur)="verifySimId($event)" />
+                  <span *ngIf="isDuplicateSimId==false"><i class="fa fa-check item-available"></i></span>
+                  <span *ngIf="isDuplicateSimId==true"><i class="fa fa-times item-not-available"></i></span>
+                </div>
+                <label *ngIf="!((deviceForm.submitted || SimId.dirty) && SimId.errors) && isDuplicateSimId == true" class="err-label">SIM Id is already assign</label>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label" [ngClass]="(deviceForm.submitted && (model.HardwareProfiles==null || model.HardwareProfiles.RoleId==null)) ? 'err-title':''">Hardware Profile<span class="err-label">*</span></label>
+                <kendo-dropdownlist class="form-control" [data]="hardwareProfileData" [filterable]="true" (filterChange)="FilterChange($event,'hardware')"
+                  [textField]=" 'RoleName' " [valueField]=" 'RoleId' " [defaultItem]="{ RoleName: 'Select Hardware Profile', RoleId: null, IsPeopleAssign: false }"
+                  [(value)]="model.HardwareProfiles" [ngClass]="(deviceForm.submitted && (model.HardwareProfiles==null || model.HardwareProfiles.RoleId==null)) ? 'err-input':''">
+                </kendo-dropdownlist>
+                <label *ngIf="(deviceForm.submitted && (model.HardwareProfiles==null || model.HardwareProfiles.RoleId==null))" class="err-label">Please select HardwareProfile</label>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Script Name</label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="Script" maxlength="50" [(ngModel)]="model.Script" #Script="ngModel" />
+                </div>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Inventory SKU </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="InventorySku" maxlength="50" [(ngModel)]="model.InventorySku" #InventorySku="ngModel"
+                  />
+                </div>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Firmware </label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="Firmware" maxlength="50" [(ngModel)]="model.Firmware" #Firmware="ngModel" />
+                </div>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Purchase Date</label>
+                <kendo-datepicker [format]="'dd-MMM-yyyy'" class="form-control" [(value)]="purchaseDate" name="purchaseDate" [(ngModel)]="purchaseDate"
+                  #dtpurchaseDate="ngModel"></kendo-datepicker>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Condition</label>
+                <kendo-dropdownlist class="form-control" [data]="conditionData" (filterChange)="modelFilterChange($event)" [textField]=" 'Name' "
+                  [valueField]=" 'Id' " [(value)]="model.Conditions">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">RMA Code</label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="RmaCode" maxlength="50" [(ngModel)]="model.RmaCode" #RmaCode="ngModel" />
+                </div>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Key</label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="DeviceKey" maxlength="50" [(ngModel)]="model.DeviceKey" #DeviceKey="ngModel"
+                  />
+                </div>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Reporting Frequency (second)</label>
+                <div class="fa-input">
+                  <input type="number" class="form-control" name="ReportingFrequency" min="0" (blur)="checkReportNumber($event)" (keypress)="!($event.keyCode > 31 && ($event.keyCode < 48 || $event.keyCode > 57))"
+                    [(ngModel)]="model.ReportingFrequency" #ReportingFrequency="ngModel" [ngClass]="((deviceForm.submitted || ReportingFrequency.dirty) && ReportingFrequency.invalid ) ? 'err-input':''"
+                  />
+                </div>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Phone</label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="Phone" maxlength="50" [(ngModel)]="model.Phone" #Phone="ngModel" />
+                </div>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Carrier</label>
+                <kendo-dropdownlist class="form-control" [data]="carrierData" [filterable]="true" (filterChange)="FilterChange($event,'carrier')"
+                  [textField]=" 'RoleName' " [valueField]=" 'RoleId' " [defaultItem]="{ RoleName: 'Select Carrier', RoleId: null, IsPeopleAssign: false }"
+                  [(value)]="model.Carriers">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Service Plan ID</label>
+                <div class="fa-input">
+                  <input type="text" class="form-control" name="ServicePlanId" maxlength="50" [(ngModel)]="model.ServicePlanId" #ServicePlanId="ngModel"
+                  />
+                </div>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">PND Model</label>
+                <kendo-dropdownlist class="form-control" [data]="pndModeData" [textField]=" 'Name' " [valueField]=" 'Id' " [(value)]="model.PndMode">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-sm-3 client-box">
+                <b class="control-label">Item Status</b>
+                <div class="fa-input">
+                  <input type="radio" name="IsItemStatus" id="it1" value="true" (change)="model.IsItemStatus=true" [checked]="model.IsItemStatus">
+                  <label for="it1" class="control-label">Enabled</label>
+                  <input type="radio" name="IsItemStatus" id="it0" value="false" (change)="model.IsItemStatus=false" [checked]="!model.IsItemStatus">
+                  <label for="it0" class="control-label">Disabled</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </kendo-tabstrip-tab>
+      <kendo-tabstrip-tab [title]="'Client Configuration'" [selected]="!IsSelected">
+        <ng-template kendoTabContent>
+          <div class="form-horizontal">
+            <div class="form-group">
+              <div class="col-sm-3 client-box">
+                <label class="control-label" [ngClass]="(deviceForm.submitted && (this.model.Clients != null && this.model.Clients.RoleId != null && ((this.model.Group == null || this.model.Group.RoleId == null) || (this.model.Entity.Name == 'Vehicle') ? (this.model.Vehicle == null || this.model.Vehicle.Id == null) : (this.model.Asset == null || this.model.Asset.Id == null)))) ? 'err-title':''">Client</label>
+                <kendo-dropdownlist class="form-control" [data]="clientData" [filterable]="true" (filterChange)="FilterChange($event,'client')"
+                  [textField]=" 'RoleName' " [valueField]=" 'RoleId' " [disabled]="isClient" (valueChange)="onClientChange($event)"
+                  [defaultItem]="{ RoleName: 'Select Client', RoleId: null, IsPeopleAssign: false }" [(value)]="model.Clients">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label" [ngClass]="(deviceForm.submitted && (this.model.Clients != null && this.model.Clients.RoleId != null && ((this.model.Group == null || this.model.Group.RoleId == null) || (this.model.Entity.Name == 'Vehicle') ? (this.model.Vehicle == null || this.model.Vehicle.Id == null) : (this.model.Asset == null || this.model.Asset.Id == null)))) ? 'err-title':''">Group</label>
+                <kendo-dropdownlist class="form-control" [data]="groupData" [filterable]="true" (filterChange)="FilterChange($event,'group')"
+                  [textField]=" 'RoleName' " [disabled]="isGroup" [valueField]=" 'RoleId' " (valueChange)="groupChange($event)"
+                  [defaultItem]="{ RoleName: 'Select Group', RoleId: null, IsPeopleAssign: false }" [(value)]="model.Group">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Entity Type</label>
+                <kendo-dropdownlist class="form-control" [data]="entityTypeData" (valueChange)="isEntity=($event.Name=='Vehicle')?true:false"
+                  (selectionChange)="isEntity=($event.Name=='Vehicle')?true:false" [textField]=" 'Name' " [valueField]=" 'Id' "
+                  [(value)]="model.Entity">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-sm-3 client-box" *ngIf="!isEntity">
+                <label class="control-label" [ngClass]="(deviceForm.submitted && (this.model.Clients != null && this.model.Clients.RoleId != null && ((this.model.Group == null || this.model.Group.RoleId == null) || (this.model.Entity.Name == 'Vehicle') ? (this.model.Vehicle == null || this.model.Vehicle.Id == null) : (this.model.Asset == null || this.model.Asset.Id == null)))) ? 'err-title':''">Asset Name</label>
+                <kendo-dropdownlist class="form-control" [data]="assetData" [filterable]="true" (filterChange)="FilterChange($event,'asset')"
+                  [textField]=" 'Name' " [valueField]=" 'Id' " [defaultItem]="{ Name: 'Select Asset', Id: null, CurrentDeviceId: null }"
+                  (valueChange)="vehicleChange($event)" [disabled]="isAsset" [(value)]="model.Asset">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-sm-3 client-box" *ngIf="isEntity">
+                <label class="control-label" [ngClass]="(deviceForm.submitted && (this.model.Clients != null && this.model.Clients.RoleId != null && ((this.model.Group == null || this.model.Group.RoleId == null) || (this.model.Entity.Name == 'Vehicle') ? (this.model.Vehicle == null || this.model.Vehicle.Id == null) : (this.model.Asset == null || this.model.Asset.Id == null)))) ? 'err-title':''">Vehicle Name</label>
+                <kendo-dropdownlist class="form-control" [data]="vehicleData" [filterable]="true" (filterChange)="FilterChange($event,'vehicle')"
+                  [textField]=" 'Name' " [valueField]=" 'Id' " [defaultItem]="{ Name: 'Select Vehicle', Id: null, CurrentDeviceId: null }"
+                  (valueChange)="vehicleChange($event)" [disabled]="isVehicle" [(value)]="model.Vehicle">
+                </kendo-dropdownlist>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Image</label>
+                <kendo-combobox [data]="mapiconData" [textField]="'Name'" [disabled]="isMapicon" [valueField]="'Id'" [value]="model.MapIcon"
+                  (valueChange)="imageChanges($event)">
+                  <ng-template kendoComboBoxItemTemplate let-dataItem>
+                    <img width="16px" class="k-grid-action-btn" src="assets/images/{{dataItem.Url}}" title="{{dataItem.Name}}" alt="{{dataItem.Name}}"
+                    />{{ dataItem.Name }}
+                  </ng-template>
+                </kendo-combobox>
+                <div *ngIf="model.MapIcon != null && model.MapIcon.Url != ''">
+                  <img width="16px" class="k-grid-action-btn" src="assets/images/{{model.MapIcon.Url}}" title="{{model.MapIcon.Name}}" alt="{{model.MapIcon.Name}}"
+                  />
+                </div>
+              </div>
+
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Trace Line Color</label>
+                <input [(colorPicker)]="model.TraceColor" [disabled]="isTrackColor" [style.background]="model.TraceColor" />
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </kendo-tabstrip-tab>
+    </kendo-tabstrip>
+    <div class="btn-box" *ngIf="!IsCreatePage">
+      <button type="button" class="btn btn-default btn-gray" routerLink="/admin/tools/device">Cancel</button>
+      <button type="submit" class="btn btn-default btn-orange">Save</button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,48 @@
+<div class="content-wrapper pl0">
+  <div class="top-button-main p15">
+    Fleet
+    <div class="top-button-right pull-right">
+      <div class="top-filter pull-left">
+
+        <input type="text" placeholder="Search details..." name="searchText" class="form-control k-textbox pull-right" value="filterText"
+          [(ngModel)]="filterText" (keyup)="fileter()" />
+      </div>
+      <button class="btn btn-orange pull-right ml10" kendoButton (click)="onClickGroupList()">Group List</button>
+    </div>
+  </div>
+  <div class="grid-main p15 full-width">
+    <div class="grid-box full-width">
+      <kendo-grid [data]="kgDataSource | async" [pageSize]="kgPageSize" (pageChange)="pageChange($event)" [skip]="kgSkip" [pageable]="true"
+        [sort]="kgSort" [sortable]="{
+            allowUnsort: true,
+            mode: 'multiple'
+            }" (dataStateChange)="onStateChange($event)" (sortChange)="sortChange($event)">
+
+        <kendo-grid-column title="Name" width="160px">
+          <ng-template kendoGridCellTemplate let-dataItem>
+            <a class="car_name" [routerLink]="'logbook/'+dataItem.Id">{{dataItem.Name}}</a>
+          </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column field="Type " title="Type " width="190px "></kendo-grid-column>
+        <kendo-grid-column field="Rego " title="Rego " width="150 "></kendo-grid-column>
+        <kendo-grid-column field="DriverName " title=" Driver " width="150 "></kendo-grid-column>
+        <kendo-grid-column field="ClientGroupName " title="Group " width="130px "></kendo-grid-column>
+        <kendo-grid-column title="Current Location " width="190px ">
+          <ng-template kendoGridCellTemplate let-dataItem>
+            <a class="car_name" [routerLink]="'/user/live-tracking/'+ (dataItem.PlaceLocation ? dataItem.PlaceLocation : dataItem.CurrentGeoLocation)"
+              *ngIf="dataItem.PlaceName ">
+              <i class="fa fa-map-marker mr5 " [ngStyle]="setStatusColor(dataItem.VehicleStatus)" aria-hidden="true "></i>{{dataItem.PlaceName}}
+            </a>
+          </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column title="Odometer" width="130px">
+          <ng-template kendoGridCellTemplate let-dataItem>
+            <a class="car_name" [routerLink]="'/user/fleet/manage-vehicle/odometer/'+ dataItem.Id">
+              {{dataItem.Odometer || 0}} km
+            </a>
+          </ng-template>
+        </kendo-grid-column>
+      </kendo-grid>
+    </div>
+  </div>
+</div>

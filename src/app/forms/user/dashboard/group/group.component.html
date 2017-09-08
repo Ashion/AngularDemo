@@ -1,0 +1,45 @@
+<div class="tracking-group-main">
+  <div class="box-height">
+    <div class="tracking-group-top search-group">
+      <input class="btn-orange btn pull-right sm-btn" (click)="groupClick('new')" type="button" value="+ Add Group">
+      <div class="form-group">
+        <span class="input-group">
+                <input type="text" name="groupSerach" placeholder="Search groups" class="form-control"
+                 [(ngModel)] ="groupSerach" (ngModelChange)="searchGroup()" />
+                <span class="input-group-btn">
+                  <button type="button" class="btn-reset btn btn-default" (click)="clearFilter()"><i class="ion-close-round">X</i></button>
+                </span>
+        </span>
+      </div>
+
+
+    </div>
+    <div class="tracking-group-box">
+      <div class="box-height">
+        <div class="col-md-12 mt10" *ngIf="filterGroups.length == 0 && clientGropus.length != 0">Your search has returned no results. Please refine your search details.</div>
+        <div class="col-md-12 mt10" *ngIf="clientGropus.length == 0 && !loadingGroups">No groups found to display.</div>
+        <div class="col-md-12 mt10" *ngIf="loadingGroups && clientGropus.length == 0">Loading....</div>
+        <ul>
+          <li class="place-item" *ngFor="let cg of filterGroups">
+            <div class="tracking-group-text">
+              <a href="#" class="ex-link">ex-link</a>
+              <div class="tracking-group-img">
+                <img [src]="cg.PhotoURL || 'assets/images/austracker_placeholder.png'" title="" alt="">
+              </div>
+              <b (click)="groupClick(cg.ClientGroupId)">{{cg.Name}}
+                <span>{{currDate | dtToTimezone: cg.TimezoneRegion | date}} | {{currDate | dtToTimezone: cg.TimezoneRegion | date:'jms'}}</span>
+              </b>
+              <p>{{cg.Description}}</p>
+              <div class="tracking-group-cal full-width">
+                <span>Asset <i>({{cg.AssetCount}})</i></span>
+                <span>Individual <i>({{cg.IndividualConut}})</i></span>
+                <span> Vehicle <i>({{cg.VehicleCount}})</i></span>
+                <span>Driver <i>({{cg.DriverCount}})</i></span>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

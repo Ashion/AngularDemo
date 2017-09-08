@@ -1,0 +1,42 @@
+<div class="timeline-top">
+    <div class="timeline-left">
+        <a href="javascript:void(0)" (click)="openGroupPopup = !openGroupPopup" class="log-menu">
+                <i></i>
+                Activity Log 
+        </a>
+        <a *ngIf="displayClear" href="javascript:void(0)" (click)="clearFilter()" style="float: right;line-height: 35px;width: 10px;margin-right: 5px;">
+                <img src="assets/images/delete.png" title="Clear filter" alt="" style="vertical-align: middle;display: inline-block;" />
+            </a>
+        <ul class="log-dropdown" [ngClass]="{'active': openGroupPopup}">
+            <li *ngFor="let grp of clientGropus" (click)="filterGroup(grp.ClientGroupId)">
+                <!-- {{grp.Name}} -->
+                <div class="log-search-res-box full-width">
+                    <div class="log-user-img">
+                        <img [src]="grp.PhotoURL || 'assets/images/user-icon.png'" [title]="grp.Name" alt="driver-image" />
+                    </div>
+                    <b> {{grp.Name}}</b>
+                    <span>{{grp.CreatedDate}}</span>
+                </div>
+            </li>
+        </ul>
+        <div class="timeline-search-box">
+            <input type="text" name="vehicleSerach" class="form-control" [(ngModel)]="vehicleSerach" (ngModelChange)="searchVehicle()"
+                placeholder="Search Vehicle..">
+            <i class="fa fa-search"></i>
+        </div>
+    </div>
+    <div class="timeline-right">
+        <div class="datepicker-box">
+            <a class="d-arrow d-left" (click)="prevDate()"><i class="fa fa-angle-left"></i></a>
+            <kendo-datepicker [format]="'D'" class="form-control" name="TripDate" (valueChange)="onDateChange($event)" [value]="dateValue"></kendo-datepicker>
+            <a class="d-arrow d-right" (click)="nextDate()"><i class="fa fa-angle-right"></i></a>
+        </div>
+        <!-- <button type="button" (click)="zoomIn()"> + </button>
+        <button type="button" (click)="zoomOut()"> - </button> -->
+    </div>
+</div>
+<div class="full-width">
+    <div id="timeline" [visTimeline]="visTimeline" [visTimelineItems]="visTimelineItems" [visTimelineOptions]="visTimelineOptions"
+        [visTimelineGroups]="visTimelineGroups" (initialized)="timelineInitialized()"></div>
+
+</div>

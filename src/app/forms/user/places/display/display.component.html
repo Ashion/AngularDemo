@@ -1,0 +1,74 @@
+<div class="places-left">
+  <div class="box-height">
+    <div class="places-title full-width"><span>Places</span>
+      <a routerLink="/user/places/new" class="btn btn-orange pull-right btn-default" id="THE_ID">Create</a></div>
+    <div class="clearfix"></div>
+    <kendo-tabstrip (tabSelect)="onTabChange($event)">
+      <kendo-tabstrip-tab [title]="'Places (' + ((places.length == null) ? 0 :(places.length)) + ')'" [selected]="true">
+        <ng-template kendoTabContent>
+          <div class="map-widget--search">
+            <div class="form-group">
+              <span class="input-group">
+                <input (input)="searchPlaces($event)" placeholder="Search places" class="form-control" (keyup)="searchKeyUp($event, refSearchPlace)" #refSearchPlace/>
+                <span class="input-group-btn">
+                  <button type="button" class="btn-reset btn btn-default" (click)="clearFilter(refSearchPlace)"><i class="ion-close-round">X</i></button>
+                </span>
+              </span>
+            </div>
+          </div>
+          <div class="col-md-12 mt10" *ngIf="places.length == 0 && placesData.length != 0">Your search has returned no results. Please refine your search details.</div>
+          <div class="col-md-12 mt10" *ngIf="placesData.length == 0 && !loadingPlaces">No places found to display.</div>
+          <div class="col-md-12 mt10" *ngIf="loadingPlaces && placesData.length == 0">Loading....</div>
+          <div style="height: 62vh">
+            <div slimScroll height="100%" size="5px">
+              <ul>
+                <li class="place-item" *ngFor="let p of places">
+                  <div class="btn-right pull-right btn-group btn-group-sm">
+                    <a [routerLink]="p.PlaceId" class="btn btn-default">Edit</a>
+                    <button type="button" class="btn btn-danger" (click)="deletePlace(p.PlaceId)">
+                  Delete
+                  </button>
+                  </div><strong><a class="app-jump" [id]="p.PlaceId">{{p.Name}}</a></strong>
+                  <div>
+                    {{p.SquareMeterArea | m2ToKm2}} km<sup>2</sup>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </ng-template>
+      </kendo-tabstrip-tab>
+      <kendo-tabstrip-tab [title]="'Suggestions (' + ((mostVisitedPlaces.length == null) ? 0 :(mostVisitedPlaces.length)) + ')'">
+        <ng-template kendoTabContent>
+          <div class="map-widget--search">Most visited places in last 30 days</div>
+          <div class="col-md-12 mt10" *ngIf="mostVisitedPlaces.length == 0 && !loadingPlaces">No places found to display.</div>
+          <div class="col-md-12 mt10" *ngIf="loadingPlaces && mostVisitedPlaces.length == 0">Loading....</div>
+          <div style="height: 68vh">
+            <div slimScroll height="100%" size="5px">
+              <ul>
+                <li class="place-item" *ngFor="let p of mostVisitedPlaces">
+                  <div class="btn-right pull-right btn-group btn-group-sm">
+                    <button type="button" class="btn btn-danger" (click)="addSuggestion(p.PlaceName)">Add to places</button>
+                  </div><strong><a class="app-jump" [id]="p.SuggestionPlaceId">{{p.PlaceName}}</a></strong>
+                  <div>
+                    {{p.NumberOfVisit}} times close to this place
+                  </div>
+                </li>
+              </ul>
+              <div class="col-md-12 mt10 mb10">
+                <button *ngIf="mostVisitedPlaces.length != 0" [disabled]="suggestionsEnd" type="button" class="btn-reset btn btn-orange full-width"
+                  (click)="loadMoreSuggestions()">{{suggestionsEnd ? 'You reached the end' : (loadingSuggestions? 'Please wait...' : 'Load more')}}</button>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </kendo-tabstrip-tab>
+    </kendo-tabstrip>
+  </div>
+</div>
+<div class="place-right">
+  <div class="box-height">
+    <app-map *ngIf='mapReady'></app-map>
+  </div>
+</div>
+<div class=" clearfix "></div>

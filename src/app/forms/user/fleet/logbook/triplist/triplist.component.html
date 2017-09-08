@@ -1,0 +1,151 @@
+<div class="triplist-mian">
+    <div class="triplist-top">
+        <div *ngIf="!rangeFilter" class="datepicker-box">
+            <a class="d-arrow d-left" (click)="prevDate()"><i class="fa fa-angle-left"></i></a>
+            <kendo-datepicker [format]="'dd MMMM yyyy'" class="form-control" name="TripDate" (valueChange)="onDateChange($event)" [value]="dateValue"></kendo-datepicker>
+            <a class="d-arrow d-right" (click)="nextDate()"><i class="fa fa-angle-right"></i></a>
+        </div>
+        <div *ngIf="rangeFilter" class="range-box" (click)="openFilter = !openFilter">
+            {{rangeFilter.startDate | date:'dd MMM yy, hh:mm a'}} - {{rangeFilter.endDate | date:'dd MMM yy, hh:mm a'}}
+            <a href="JavaScript:Void(0);" (click)="clearFilter()">X</a>
+        </div>
+        <div class="triplist-btn">
+            <input type="button" value="&#xf019;" class="btn-gray btn-width fa-input btn pull-right">
+            <input type="button" value="&#xf0b0;" [ngClass]="(rangeFilter ? 'btn-orange' : 'btn-gray') + ' mr5 btn-width fa-input btn pull-right'"
+                (click)="openFilter = !openFilter">
+        </div>
+        <form name="form" [hidden]="!openFilter" class="dateinput-box" #filterForm="ngForm" (ngSubmit)="filterForm.form.valid && filterTrip(startTimeValue, endTimeValue)"
+            novalidate>
+            <div class="dateinput-field">
+                <md2-datepicker name="startTime" #startTime="ngModel" [(ngModel)]="startTimeValue" type="datetime" format="dd MMM y, HH:mm a"
+                    placeholder="Start Time " [ngClass]="_err.input(filterForm, startTime)" openOnFocus="true" required></md2-datepicker>
+                <label *ngIf="_err.required(filterForm, startTime)" class="err-label">Start time is required</label>
+                <label *ngIf="_err.incorrect(filterForm, startTime)" class="err-label">Invalid Start time</label>
+            </div>
+            <div class="dateinput-field">
+                <md2-datepicker name="endTime" #endTime="ngModel" [(ngModel)]="endTimeValue" type="datetime" format="dd MMM y, HH:mm a" placeholder="End Time "
+                    [ngClass]="_err.input(filterForm, endTime)" openOnFocus="true" required></md2-datepicker>
+                <label *ngIf="_err.required(filterForm, endTime)" class="err-label">End time is required</label>
+                <label *ngIf="_err.incorrect(filterForm, endTime)" class="err-label">Invalid End time</label>
+            </div>
+            <div class="dateinput-btn">
+                <input type="submit" class="btn btn-width btn-orange" value="Filter" />
+                <input type="button" class="btn btn-width btn-gray" value="Clear" (click)="clearFilter()" />
+            </div>
+        </form>
+
+    </div>
+    <div class="triplist-cont">
+        <div *ngIf="loadingTrips" class="triplist-cont-box loading-text">Loading...</div>
+        <div *ngIf="logbookData?.VehicleTrips.length > 0" class="triplist-cont-box">
+
+            <div slimScroll height="100%" size="5px">
+                <ul>
+                    <li *ngFor="let trip of logbookData?.VehicleTrips; let i=index" (click)="showTripInfoBox(trip)" [attr.data-index]="i" [id]="trip.VehicleTripId">
+                        <div class="triplist-time" [ngStyle]="{'border-right': '1px solid ' + tripColors[i%tripColors.length]} ">
+                            <div class="triplist-time-top" [ngStyle]="(dateValue | date:'dd') != (trip.JourneyStartDate | date:'dd') || rangeFilter ? {'margin-top': '-2px'}:{}">
+                                <span style="font-size: 10px;" *ngIf="(dateValue | date:'dd') != (trip.JourneyStartDate | date:'dd') || rangeFilter">{{trip.JourneyStartDate | date:'dd MMM'}}<br /></span>{{trip.JourneyStartDate
+                                | date:'jm'}}</div>
+                            <div class="triplist-time-bottom ">
+                                <span><span style="font-size: 10px;" *ngIf="(dateValue | date:'dd') != (trip.JourneyEndDate | date:'dd') || rangeFilter">{{trip.JourneyEndDate | date:'dd MMM'}}<br /></span>{{trip.JourneyEndDate
+                                | date:'jm'}}</span>
+                            </div>
+                        </div>
+                        <div class="triplist-text-main ">
+                            <div class="triplist-text-box ">
+                                <b [title]="trip.FromPlaceName ">{{trip.FromPlaceName}}</b>
+                                <div class="trp-stat full-width">
+                                    <span [ngClass]="trip.IsPrivateTrip ? 'label-private':''">{{trip.IsPrivateTrip ? 'Private': 'Business'}}</span>                                    trip {{trip.DriverName.trim() ? ' by':''}}<i>{{trip.DriverName}}</i>
+                                </div>
+                                <div class="triplist-duration ">
+                                    <span class="trp-time ">{{trip.JourneyDuration | secondToTime:true }}</span>
+                                    <span class="trp-location ">{{trip.JourneyDistance?.toLocaleString('en') || "0"}} km</span>
+                                </div>
+                                <b *ngIf="trip.JourneyEndDate" [title]="trip.DestinationPlaceName">{{trip.DestinationPlaceName}}</b>
+                                <b *ngIf="!trip.JourneyEndDate && trip.Status" [title]="trip.Status.Description" [ngStyle]="{'color':trip.Status.ColorCode}">{{trip.Status.Description}}</b>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- ********** Trip info popup ********** -->
+            <div *ngIf="selectedTrip" class="tripinfo-box">
+                <div class="tripinfo-box-inner-popup">
+                    <div class="tripinfo-box-top">
+                        <a (click)="prevTrip()" [ngStyle]="{'opacity':selectedTripIndex == 0 ? 0.5: 1}"><i class="fa fa-2x fa-angle-up"></i></a>
+                        <span class="middle-line"></span>
+                        <a (click)="nextTrip()" [ngStyle]="{'opacity':selectedTripIndex == logbookData?.VehicleTrips.length-1 ? 0.5:1}"><i class="fa fa-2x fa-angle-down"></i></a>
+                        <b>Trip {{selectedTripIndex+1}} of {{logbookData?.VehicleTrips.length}}</b>
+                        <a (click)="hideTripInfoBox()" class="close">×</a>
+                    </div>
+                    <div class="drv-row" [class]="selectedTrip.IsPrivateTrip ? 'private-trip drv-row':'drv-row'">
+                        <img *ngIf="selectedTrip.DriverPhoto" [src]="imgUrlPrefix + selectedTrip.DriverPhoto.FileAccessUrl" width="38px" />
+                        <div *ngIf="!selectedTrip.DriverPhoto" class="no-user-image">{{selectedTrip.DriverPhotoName}}</div>
+                        <div class="drv-row-right">
+                            <div><span class="drv-name">{{selectedTrip.DriverName}}</span> {{selectedTrip.DriverName.trim() ?
+                                "in":""}} {{selectedTrip.IsPrivateTrip? 'Private':'Business'}} trip
+                            </div>
+                            <div>started {{selectedTrip.JourneyStartDate | dateBackToTime:logbookData?.TimezoneRegion }} </div>
+                            <div *ngIf="loadingTripChange" class="trip-load-icon"><i class="fa fa-spinner fa-spin fa-fw margin-bottom"></i></div>
+                        </div>
+                    </div>
+                    <div class="tripinfo-modal-body">
+                        <div class="distance-row">
+                            <ul>
+                                <li>
+                                    <span class="title">distance</span>
+                                    <span class="detail">{{selectedTrip.JourneyDistance?.toLocaleString("en") || "0"}} km</span>
+                                </li>
+                                <li>
+                                    <span class="title">duration</span>
+                                    <span class="detail">{{selectedTrip.JourneyDuration | secondToTime }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="distance-start-row">
+                            <div class="st-title">Start <b class="pull-right">{{selectedTrip.JourneyStartDate | dateToTime}}</b></div>
+                            <div class="place"><i class="fa fa-map-marker" aria-hidden="true"></i>{{selectedTrip.FromPlaceName}}</div>
+                            <div class="km">{{selectedTrip.DeviceMessages && selectedTrip.DeviceMessages.length > 0 ? (selectedTrip.DeviceMessages[0].Odometer)?.toLocaleString("en")
+                                : 0}} km</div>
+                        </div>
+                        <div *ngIf="selectedTrip.JourneyEndDate" class="distance-start-row end">
+                            <div class="st-title">End <b class="pull-right">{{selectedTrip.JourneyEndDate | dateToTime}}</b></div>
+                            <div class="place"><i class="fa fa-map-marker" aria-hidden="true"></i>{{selectedTrip.DestinationPlaceName}}</div>
+                            <div class="km">{{selectedTrip.DeviceMessages && selectedTrip.DeviceMessages.length > 0 ? (selectedTrip.DeviceMessages[selectedTrip.DeviceMessages.length-1].Odometer)?.toLocaleString("en")
+                                : 0}} km
+                            </div>
+                        </div>
+                        <div class="place" *ngIf="!selectedTrip.JourneyEndDate" [ngStyle]="{'color': selectedTrip.Status.ColorCode}">{{selectedTrip.Status.Description}}</div>
+                        <div class="distance-start-row end">
+                            <input type="button" class="btn btn-default btn-orange" [disabled]="!logbookData.IsTripTypeSwitched" (click)="changeTrip(selectedTrip.VehicleTripId)"
+                                [value]="'Switch to ' + (selectedTrip.IsPrivateTrip ? 'business':'private')" />
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div *ngIf="logbookData?.VehicleTrips.length == 0" class="triplist-cont-box">
+
+            <div class="no-trips">No trips on this day</div>
+
+            <div class="next-prev">
+                <div class="common-btn" *ngIf="logbookData?.PrevTripDate" (click)="onDateChange(logbookData?.PrevTripDate)">Show previous trip from {{logbookData?.PrevTripDate | date:'mediumDate'}}</div>
+                <div class="center" *ngIf="logbookData?.PrevTripDate && logbookData?.NextTripDate">or</div>
+                <div class="common-btn" *ngIf="logbookData?.NextTripDate" (click)="onDateChange(logbookData?.NextTripDate)">Show next trip from {{logbookData?.NextTripDate | date:'mediumDate'}}</div>
+            </div>
+        </div>
+    </div>
+    <ul *ngIf="loadingTrips" class="triplist-bottom">
+        <li>Loading...</li>
+    </ul>
+    <ul *ngIf="!loadingTrips" class="triplist-bottom">
+        <li class="trip ">{{logbookData?.VehicleTrips.length}} Trip(s)</li>
+        <li class="km">{{(_sumBy(logbookData?.VehicleTrips, 'JourneyDistance'))?.toLocaleString("en")}} km</li>
+        <li class="trp-time">{{_sumBy(logbookData?.VehicleTrips, 'JourneyDuration') | secondToTime}}</li>
+    </ul>
+</div>

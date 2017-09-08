@@ -1,0 +1,30 @@
+<div class="content-breadcrumb">
+  <ul class="breadcrumb-box">
+    <li><a routerLink="/admin/tools/drivertag">DriverTag</a></li>
+    <li>{{ paramId == 'new' ? 'Add DriverTag' : 'Modify DriverTag' }}</li>
+  </ul>
+</div>
+<div class="content-box">
+  <form name="form" (ngSubmit)="driverTagForm.form.valid && save()" #driverTagForm="ngForm" novalidate>
+    <div class="form-horizontal">
+      <div class="form-group">
+        <div class="col-sm-5">
+          <label class="control-label" [ngClass]="(driverTagForm.submitted || Tag.dirty) && Tag.invalid ? 'err-title':''">Driver Tag <span class="err-label">*</span></label>
+          <div class="fa-input">
+            <input type="text" class="form-control" name="Tag" required maxlength="100" [ngStyle]="changeInputStyle()" (blur)="verifyDriverTag($event)"
+              [(ngModel)]="model.Tag" #Tag="ngModel" [ngClass]="(driverTagForm.submitted || Tag.dirty) && Tag.invalid ? 'err-input':''"
+            />
+            <span *ngIf="isDuplicate==false"><i class="fa fa-check item-available"></i></span>
+            <span *ngIf="isDuplicate==true"><i class="fa fa-times item-not-available"></i></span>
+          </div>
+          <label *ngIf="(driverTagForm.submitted || Tag.dirty) && Tag.errors && Tag.errors['required']" class="err-label">Please enter DriverTag</label>
+          <label *ngIf="!((driverTagForm.submitted || Tag.dirty) && Tag.errors && Tag.errors['required']) && isDuplicate == true" class="err-label">DriverTag is already exist</label>
+        </div>
+      </div>
+    </div>
+    <div class="btn-box">
+      <button type="button" class="btn btn-default btn-gray" (click)="onCancleClick()">Cancel</button>
+      <button type="submit" class="btn btn-default btn-orange">Save</button>
+    </div>
+  </form>
+</div>

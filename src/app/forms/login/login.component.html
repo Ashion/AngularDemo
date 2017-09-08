@@ -1,0 +1,78 @@
+<div class="login-main">
+  <!-- left box -->
+  <div class="login-left"></div>
+  <!-- right box -->
+
+  <div class="login-right">
+    <div class="login-form-main">
+      <div class="login-form-logo full-width">
+        <img src="assets/images/logo-main.png" title="logo" alt="logo" />
+      </div>
+      <!-- login form -->
+      <div *ngIf="!isForgotPassword">
+        <form name='form' novalidate (ngSubmit)="f.form.valid && loginClick()" #f="ngForm" class="login-form-box full-width">
+          <div class="form-group">
+            <label class="form-label" for="UserName">Username:</label>
+            <input type="email" class="form-control" name='UserName' [(ngModel)]="loginmodel.UserName" #UserName="ngModel" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$"
+              required />
+            <div class="err-label" *ngIf="f.submitted && UserName.errors && UserName.errors.required">
+              Please enter Username
+            </div>
+            <div class="err-label" *ngIf="f.submitted && UserName.errors && UserName.errors.pattern">
+              Username must be a valid email address
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="Password">Password:</label>
+            <input type="password" class="form-control" name='Password' [(ngModel)]="loginmodel.Password" #Password="ngModel" required
+            />
+            <div *ngIf="f.submitted && !Password.valid" class="err-label">Please enter Password</div>
+          </div>
+          <div class="full-width mt5">
+            <div class="sty-checkbox">
+              <input id="rememberme" type="checkbox" class="form-control" value="" name='rememberme' [(ngModel)]="loginmodel.RememberMe"
+                #RememberMe="ngModel">
+              <label for="rememberme">Remember Me</label>
+            </div>
+            <a (click)="isForgotPassword = !isForgotPassword" class="forgot-box">Forgot Password?</a>
+          </div>
+          <input type="submit" [disabled]="loading" class="login-btn btn-font smooth-transition" value="{{this.loading ? 'Loading...' : 'Sign in' }}">
+          <i *ngIf="loading" class="fa fa-refresh fa-pulse fa-fw margin-bottom"></i>
+        </form>
+      </div>
+      <!-- login form end-->
+
+      <div *ngIf="isForgotPassword">
+        <div *ngIf="!forgotSuccess">
+          <form name='form' novalidate (ngSubmit)="fp.form.valid && forgotClick()" #fp="ngForm" class="login-form-box full-width">
+            <div class="form-group forgotUser">
+              <label class="form-label" for="email">Username:</label>
+              <input type="email" class="form-control" name='forgotUserName' [(ngModel)]="forgotUserName" #forgotEmail="ngModel" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$"
+                required />
+              <div class="err-label" *ngIf="fp.submitted && forgotEmail.errors && forgotEmail.errors.required">
+                Please enter Username
+              </div>
+              <div class="err-label" *ngIf="fp.submitted && forgotEmail.errors && forgotEmail.errors.pattern">
+                Please enter valid Email
+              </div>
+            </div>
+            <input type="submit" [disabled]="loading" class="login-btn btn-font smooth-transition" value="Submit">
+            <input type="button" (click)="isForgotPassword = !isForgotPassword" class="login-btn btn-font smooth-transition" value="Back to Sign In">
+            <i *ngIf="loading" class="fa fa-spinner fa-pulse fa-fw margin-bottom"></i>
+          </form>
+        </div>
+        <div *ngIf="forgotSuccess">
+          <span class="forgotSuccess-msg">Please check your email and follow instructions.</span>
+          <br/>
+          <input type="button" (click)="forgotSuccess = !forgotSuccess" class="login-btn btn-font smooth-transition" value="Try different email">
+          <input type="button" (click)="isForgotPassword = !isForgotPassword" class="login-btn btn-font smooth-transition" value="Back to Sign In">
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+<div class="footer-main">
+  <img src="assets/images/footer-logo.png" title="footer-logo" alt="footer-logo" />
+</div>

@@ -1,0 +1,174 @@
+<div class="content-wrapper pl0 pb30">
+  <div class="person-section">
+    <div class="form-title">
+      {{ (paramId !='new') ? 'Modify':'Add' }} Person
+    </div>
+    <div class="full-width">
+      <form name="form" class="form-horizontal" (ngSubmit)="peopleForm.form.valid && save()" #peopleForm="ngForm" novalidate>
+        <div class="form-group">
+          <div class="col-sm-6">
+            <label class="control-label" [ngClass]="(peopleForm.submitted || FirstName.dirty) && FirstName.invalid ? 'err-title':''">First Name <span class="err-label">*</span></label>
+            <div class="fa-input">
+              <input type="text" maxlength="50" name="FirstName" required class="form-control" [(ngModel)]="model.FirstName" #FirstName="ngModel"
+                [ngClass]="(peopleForm.submitted || FirstName.dirty) && FirstName.invalid ? 'err-input':''" />
+              <label *ngIf="(peopleForm.submitted || FirstName.dirty) && FirstName.errors && FirstName.errors['required']" class="err-label">Please enter First Name</label>
+            </div>
+          </div>
+          <div class="col-sm-6 6">
+            <label class="control-label" [ngClass]="(peopleForm.submitted || LastName.dirty) && LastName.invalid ? 'err-title':''">Last Name <span class="err-label">*</span></label>
+            <div class="fa-input">
+              <input type="text" minlength="1" maxlength="50" name="LastName" required class="form-control" [(ngModel)]="model.LastName"
+                #LastName="ngModel" [ngClass]="(peopleForm.submitted || LastName.dirty) && LastName.invalid ? 'err-input':''"
+              />
+              <label *ngIf="(peopleForm.submitted || LastName.dirty) && LastName.errors && LastName.errors['required']" class="err-label">Please enter Last Name</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-6">
+            <label class="control-label" [ngClass]="((model.options==1) && (peopleForm.submitted || EmailAddress.dirty) && EmailAddress.invalid || IsEmailAvailable) ? 'err-title':''">Email Address <span class="err-label" *ngIf="(model.options==1)">*</span></label>
+            <div class="fa-input">
+              <input class="form-control" type="email" name="EmailAddress" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,5})+$" [ngClass]="((model.options==1) && (peopleForm.submitted || EmailAddress.dirty) && EmailAddress.invalid || IsEmailAvailable) ? 'err-input':''"
+                [(ngModel)]="model.EmailAddress" #EmailAddress="ngModel" required="{{(model.options==1)?true:false}}" (blur)="emailValidation()"
+              />
+              <span *ngIf="(((model.options==1) && EmailAddress.dirty && !EmailAddress.invalid) && !IsEmailAvailable)"><i class="fa fa-check item-available"></i></span>
+              <span *ngIf="(((model.options==1) && EmailAddress.dirty && EmailAddress.invalid) || IsEmailAvailable)"><i class="fa fa-times item-not-available"></i></span>
+            </div>
+            <label *ngIf="(model.options==1) && (peopleForm.submitted || EmailAddress.dirty) && EmailAddress.errors && EmailAddress.errors['required']"
+              class="err-label">Please enter Email Address</label>
+            <label *ngIf="(peopleForm.submitted || EmailAddress.dirty) && EmailAddress.errors && EmailAddress.errors['pattern']" class="err-label">Email Address must be in email format</label>
+            <label *ngIf="((model.options==1) && IsEmailAvailable)" class="err-label">Email already exist</label>
+          </div>
+          <div class="col-sm-6">
+            <label class="control-label">Phone number</label>
+            <input type="text" name="PhoneNumber" maxlength="25" class="form-control" [(ngModel)]="model.PhoneNumber" #PhoneNumber="ngModel"
+            />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-6">
+            <label class="control-label">Driver licence</label>
+            <input type="text" name="LicenseNumber" maxlength="50" class="form-control" [(ngModel)]="model.LicenseNumber" #LicenseNumber="ngModel"
+            />
+            <div class="sty-checkbox mt5">
+              <input id="rememberme" type="checkbox" class="form-control" name="IsLicenseExpiryReminderEnabled" [(ngModel)]="model.IsLicenseExpiryReminderEnabled"
+                #IsLicenseExpiryReminderEnabled="ngModel">
+              <label for="rememberme">Set a licence expiration reminder after submit</label>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <label class="control-label">Driver Tag</label>
+            <kendo-autocomplete name="DriverTag" class="form-control" [data]="sourceDriverTagList" (filterChange)="handleFilter($event)"
+              [filterable]="true" [(ngModel)]="model.TagCode" #DriverTag="ngModel" [valueField]="'Name'" (focusout)="model.TagCode =(sourceDriverTagList.length == 0)?'':model.TagCode"></kendo-autocomplete>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-6">
+            <label class="control-label">Can log in?</label>
+            <div class="full-width radio-box">
+              <div class="radio">
+                <input id="yes-r" type="radio" name="options" (click)="model.options = 1" [checked]="model.options===1">
+                <label for="yes-r">Yes</label>
+                <input id="no-r" type="radio" name="options" (click)="model.options = 0" [checked]="model.options===0">
+                <label for="no-r">No</label>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6" *ngIf="model.options==1">
+            <label class="control-label" [ngClass]="(peopleForm.submitted && (model.SecurityRole==null || model.SecurityRole.Id==null)) ? 'err-title':''">Role<span class="err-label">*</span></label>
+            <kendo-dropdownlist name="SecurityRole" [(ngModel)]="model.SecurityRole" [defaultItem]="SecurityRole" [data]="securityRoleDropDown"
+              [textField]="'Name'" [valueField]="'Id'" class="form-control" [value]="model.SecurityRole" [ngClass]="(peopleForm.submitted && (model.SecurityRole==null || model.SecurityRole.Id==null)) ? 'err-input':''">
+            </kendo-dropdownlist>
+            <label *ngIf="(peopleForm.submitted && (model.SecurityRole==null || model.SecurityRole.Id==null))" class="err-label">Please select Security Role</label>
+          </div>
+          <div class="col-sm-6" *ngIf="model.options==1">
+            <label class="control-label">Home Page</label>
+            <kendo-dropdownlist name="DefaultUrl" [(ngModel)]="model.HomePageUrl" [data]="HomePageDropDown" [textField]="'Name'" [valueField]="'Id'"
+              class="form-control" [value]="model.HomePageUrl" #DefaultUrl="ngModel">
+            </kendo-dropdownlist>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-6">
+            <label class="control-label">Is Driver ?</label>
+            <div class="full-width radio-box">
+              <div class="radio">
+                <input id="driver-yes" type="radio" name="isdriver" (click)="model.IsDriver = 1" [checked]="model.IsDriver===1">
+                <label for="driver-yes">Yes</label>
+                <input id="driver-no" type="radio" name="isdriver" (click)="model.IsDriver = 0" [checked]="model.IsDriver===0">
+                <label for="driver-no">No</label>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <label class="control-label">Client Group</label>
+            <kendo-dropdownlist class="form-control" [data]="groupData" [textField]=" 'Name' " [valueField]=" 'Id' " (valueChange)="groupChange($event)"
+              [defaultItem]="defaultGroup" [(value)]="model.Group">
+            </kendo-dropdownlist>
+          </div>
+          <div class="col-sm-6">
+            <label class="control-label">vehicles</label>
+            <!-- <div class="pull-right"> -->
+            <div class="dropdown btn-group">
+              <button [ngClass]="(model.checkedVehicleIds !=null && model.checkedVehicleIds.length > 0)?'btn-primary':'btn-default'" class="btn dropdown-toggle"
+                type="button" data-toggle="dropdown" [disabled]="model.IsDriver===0 || (model.Group!=null && model.Group.Id==null)">{{(model.checkedVehicleIds ==null || model.checkedVehicleIds.length == 0) ? 'Select Vehicle' : model.checkedVehicleIds.length + ' vehicles'}}</button>
+              <button type="button" [disabled]="model.IsDriver===0 || (model.Group!=null && model.Group.Id ==null)" *ngIf="model.checkedVehicleIds !=null && model.checkedVehicleIds.length > 0"
+                (click)="vehicleDeSelectAll()" class="btn btn-primary"><i class="fa fa-times"></i></button>
+              <button type="button" [disabled]="model.IsDriver===0 || (model.checkedVehicleIds!=null && model.checkedVehicleIds.length == allVehicles.length) || (model.Group!=null && model.Group.Id ==null)"
+                (click)="vehicleSelectAll()" class="btn btn-default">Select all</button>
+              <ul class="dropdown-menu with-select popover bottom" (click)="vehicleDDClick($event)" role="menu">
+                <h3 class="popover-title">
+                  <div>
+                    <div class="close"><i class="fa fa-times" aria-hidden="true"></i></div>Vehicles
+                  </div>
+                </h3>
+                <div class="popover-content">
+                  <div class="searchable-select">
+                    <div class="searchable-header">
+                      <div class="form-group"><input type="text" placeholder="Search Vehicles..." class="form-control"></div>
+                      <h5>Available vehicles</h5>
+                      <hr>
+                    </div>
+                  </div>
+                  <div class="select-list">
+                    <li [class.active]="vehicle.checked" (click)="checkVehicle(vehicle)" role="presentation" *ngFor="let vehicle of filteredVehicles">
+                      <div class="item-toggle vehicle-toggle shorten-text">
+                        <i class="fa fa-check check" aria-hidden="true"></i>
+                        <div class="vehicle-name"><strong>{{vehicle.VehicleName}}</strong> {{vehicle.Rego }}
+                        </div>
+                        <small class="driver-name">{{vehicle.DriverName}}</small>
+                      </div>
+                    </li>
+                  </div>
+                </div>
+              </ul>
+            </div>
+            <!-- </div> -->
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-6">
+            <label class="control-label ">Upload Image</label>
+            <app-upload class="upload-img" (uploadFile)="onSelectFile($event)" (removeFile)="onRemoveFile($event)" [fileObj]="imageFile"></app-upload>
+          </div>
+          <!-- <div class="col-sm-6" *ngIf="model.options==1">
+            <label class="control-label">Home Page</label>
+            <kendo-dropdownlist name="DefaultUrl" [(ngModel)]="model.HomePageUrl" [data]="HomePageDropDown" [textField]="'Name'" [valueField]="'Id'"
+              class="form-control" [value]="model.HomePageUrl" #DefaultUrl="ngModel">
+            </kendo-dropdownlist>
+          </div> -->
+        </div>
+
+        <div class="full-width" *ngIf="(model.options==1) && (this.OldCanlogin==0)">
+          <div *ngIf="(model.Username == null) || (model.Username == '')" class="alert alert-info">We are going to send an invitation email to your employee</div>
+          <div *ngIf="(model.Username != null )" class="alert alert-info">Username is already registered. User can login using registered credentials</div>
+        </div>
+        <div class="btn-box ">
+          <button type="button" class="btn btn-default btn-gray" kendoButton (click)="onCancleClick()">Cancel</button>
+          <button type="submit" [disabled]="loading" class="btn btn-default btn-orange" kendoButton>{{ loading == true ? 'Saving...' : 'Save' }}</button>
+        </div>
+      </form>
+    </div>
+    <div class="clr"></div>
+  </div>
+</div>

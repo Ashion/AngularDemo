@@ -1,0 +1,89 @@
+<div class="content-breadcrumb">
+  <ul class="breadcrumb-box">
+    <li><a href="#">Manage Hardware</a></li>
+    <li><a routerLink="/admin/settings/configuration">Profile</a></li>
+    <li>{{ paramId == 'new' ? 'Add Profile' : 'Modify Profile' }}</li>
+
+  </ul>
+</div>
+<div class="content-box">
+  <form name="form" class="form-horizontal" (ngSubmit)="configForm.form.valid && save()" #configForm="ngForm" novalidate>
+    <kendo-tabstrip>
+      <kendo-tabstrip-tab [title]="'General'" [selected]="true">
+        <ng-template kendoTabContent>
+          <div class="form-horizontal">
+            <div class="form-group">
+              <div class="col-sm-3 client-box">
+                <label class="control-label" [ngClass]="(configForm.submitted && (model.Parser==null || model.Parser.Id==null)) ? 'err-title':''">Parser<span class="err-label">*</span></label>
+                <kendo-dropdownlist name="ParserNameList" class="form-control" [data]="ParserNameList" [textField]=" 'Name' " [valueField]=" 'Id' "
+                  [defaultItem]="defaultParser" [(value)]="model.Parser" [ngClass]="(configForm.submitted && (model.Parser==null || model.Parser.Id==null)) ? 'err-input':''">
+                </kendo-dropdownlist>
+                <label *ngIf="(configForm.submitted && (model.Parser==null || model.Parser.Id==null))" class="err-label">Please select Parser</label>
+              </div>
+              <div class="col-sm-3 client-box ">
+                <label class="control-label" [ngClass]="((configForm.submitted || ProfileName.dirty) && ProfileName.invalid) ? 'err-title':''">Profile Name<span class="err-label">*</span></label>
+                <input type="text" class="form-control " name="ProfileName" maxlength="100" required [(ngModel)]="model.ProfileName" #ProfileName="ngModel"
+                  [ngClass]="((configForm.submitted || ProfileName.dirty) && ProfileName.invalid) ? 'err-input':''" />
+                <label *ngIf="(configForm.submitted || ProfileName.dirty) && ProfileName.errors && ProfileName.errors['required']" class="err-label">Please enter Profile name</label>
+              </div>
+              <div class="col-sm-3 client-box ">
+                <label class="control-label" [ngClass]="((configForm.submitted || PortNumber.dirty) && PortNumber.invalid || model.PortNumber >65535) ? 'err-title':''">Port Number<span class="err-label">*</span></label>
+                <input type="number" min="0" max="65535" class="form-control" name="PortNumber" (keypress)="portNumberHandler($event)" required
+                  [(ngModel)]="model.PortNumber" #PortNumber="ngModel" [ngClass]="((configForm.submitted || PortNumber.dirty) && PortNumber.invalid || model.PortNumber >65535) ? 'err-input':''"
+                />
+                <label *ngIf="(configForm.submitted || PortNumber.dirty) && PortNumber.errors && PortNumber.errors['required']" class="err-label">Please enter Port Number</label>
+                <label *ngIf="model.PortNumber >65535" class="err-label">Port must be between 0 to 65535 !</label>
+              </div>
+              <div class="col-sm-3 client-box">
+                <label class="control-label">Protocol<span class="err-label">*</span></label>
+                <kendo-dropdownlist name="ProtocolList" class="form-control" [data]="[{ Id: '1', Name: 'UDP' }, { Id: '2', Name: 'TCP' }]"
+                  [textField]=" 'Name' " [valueField]=" 'Id' " [defaultItem]="defaultProtocol" [(value)]="model.Protocol" [ngClass]="(configForm.submitted && (model.Protocol==null || model.Protocol.Id==null)) ? 'err-input':''">
+                </kendo-dropdownlist>
+                <label *ngIf="(configForm.submitted && (model.Protocol==null || model.Protocol.Id==null))" class="err-label">Please select Protocol</label>
+              </div>
+              <div class="col-sm-3 client-box ">
+                <label class="control-label ">Description</label>
+                <input type="text" class="form-control " name="Description" maxlength="100" [(ngModel)]="model.Description" #Description="ngModel"
+                />
+              </div>
+              <div class="col-sm-3 client-box ">
+                <label class="control-label ">Firmware</label>
+                <input type="text" class="form-control " name="Firmware" maxlength="50" [(ngModel)]="model.Firmware" #Firmware="ngModel"
+                />
+              </div>
+              <div class="col-sm-3 client-box ">
+                <label class="control-label ">Image Path</label>
+                <input type="text" class="form-control " name="ImagePath" maxlength="50" [(ngModel)]="model.ImagePath" #ImagePath="ngModel"
+                />
+              </div>
+              <div class="col-sm-3 client-box ">
+                <label class="control-label ">Travel Distance Discrepancy (Feet) </label>
+                <input type="text" class="form-control" name="TravelDistance" maxlength="10" [(ngModel)]="model.TravelDistance" #TravelDistance="ngModel"
+                />
+              </div>
+              <div class="col-sm-3 client-box ">
+                <label class="control-label ">Ignition Off Speed Threshold (km/h)</label>
+                <input type="text" class="form-control " name="StopSpeedThreshold" maxlength="10" [(ngModel)]="model.StopSpeedThreshold"
+                  #StopSpeedThreshold="ngModel" />
+              </div>
+              <div class="col-sm-3 client-box ">
+                <label class="control-label ">Ping Support</label>
+                <input type="checkbox" [name]="model.HasPingSupport" [checked]="model.HasPingSupport" (change)="model.HasPingSupport=!model.HasPingSupport"
+                />
+              </div>
+              <div class="col-sm-3 client-box" *ngIf="model.HasPingSupport">
+                <label class="control-label ">Ping Message</label>
+                <input type="text" class="form-control" name="PingMessage" maxlength="50" [(ngModel)]="model.PingMessage" #PingMessage="ngModel"
+                />
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </kendo-tabstrip-tab>
+    </kendo-tabstrip>
+    <div class="btn-box">
+      <button type="button" class="btn btn-default btn-gray" [routerLink]="['/admin/settings/configuration']">Cancel</button>
+      <button type="submit" class="btn btn-default btn-orange">Save</button>
+    </div>
+  </form>
+</div>

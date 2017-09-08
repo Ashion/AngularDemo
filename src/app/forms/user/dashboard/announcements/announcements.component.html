@@ -1,0 +1,42 @@
+<div class="announcements-box">
+    <div class="box-height">
+        <div class="box-height">
+            <div class="alert-popup-main" *ngIf="openAnnouncementAlert">
+                <div class="alert-popup-top">
+                    <div class="alert-popup-icon">
+                        <img alt="" src="assets/images/location-red.png" title="">
+                    </div>
+                    Alert
+                    <a (click)="openAnnouncementAlert = false;" class="close-icon"><img alt="" src="assets/images/close-icon.png" title=""></a>
+                </div>
+                <div class="alert-popup-box">
+                    <div>
+                        <div [innerHTML]="currentAnnouncement.Message | safeHtml"></div>
+                        <span>{{currentAnnouncement.SentDate | dtToTimezone: currentAnnouncement.Region | date}} | {{currentAnnouncement.SentDate | dtToTimezone: currentAnnouncement.Region | date:'jms'}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="title-text">Announcements </div>
+            <div class="annonc-aerts-sub">
+                <div class="box-height">
+                    <div class="col-md-12 mt10" *ngIf="loadingAnnouncement && announcements.length == 0">Loading....</div>
+                    <div class="col-md-12 mt10" *ngIf="announcements.length == 0 && !loadingAnnouncement">No announcements to display.</div>
+                    <!-- -->
+                    <div class="announcements-field" *ngFor="let announcement of announcements">
+                        <div class="announcements-field-text">
+                            <div class="announcements-field-img">
+                                <img alt="" [src]="announcement.SenderImagePath || 'assets/images/default-user-image.png'" title="">
+                            </div>
+                            <b>{{announcement.SenderName}}
+                            <span>{{announcement.SentDate | dtToTimezone: announcement.Region | date}} | {{announcement.SentDate | dtToTimezone: announcement.Region | date:'jms'}}</span>
+                        </b>
+                            <p>{{announcement.DisplayMessage}}
+                                <a (click)="openAnnouncement(announcement.AnnouncementId)">read more</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

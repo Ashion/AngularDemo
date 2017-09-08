@@ -1,0 +1,9 @@
+<kendo-upload [autoUpload]="true" [multiple]="false" [restrictions]="uploadRestrictions" (select)="selectEventHandler($event)"
+  (upload)="uploadEventHandler($event)" text="ads">
+  <kendo-upload-messages select="Choose">
+  </kendo-upload-messages>
+</kendo-upload>
+<div class="prv-img">
+  <button *ngIf="fileObj && fileObj.FileAccessUrl" type="button" kendoButton (click)="onClearClick()">X</button>
+  <img [src]="(fileObj && fileObj.FileAccessUrl) ||'assets/images/no-image.jpg'" alt="image preview" />
+</div>

@@ -1,0 +1,56 @@
+<div *ngIf="displayMode; else addEditBlock">
+    <span class="popover-label">Labels</span>
+    <div *ngIf="labelList.length != 0" class="inner-popup">
+        <input class="form-control" placeholder="Search labels..." [ngModel]="searchText" (ngModelChange)="searchLabel($event)" />
+
+
+        <div slimScroll height="100%" size="5px" class="color-palette">
+            <div *ngFor="let lbl of lblList">
+                <div *ngIf="!lbl.IsDeleted" class="pill-main">
+                    <div class="pill pill-fld" [ngStyle]="{'background-color': lbl.ColorCode}">
+                        {{lbl.Name}}
+                    </div>
+                    <a class="btn btn-default btn-width btn-gray ml5 pull-right" (click)="deleteLabel(lbl.VehicleLabelId)">Delete</a>
+                    <a class="btn btn-default btn-width btn-orange pull-right" (click)="editLabel(lbl)">Edit</a>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            <div *ngIf="lblList.length == 0" style="margin: 10px auto;">
+                No labels containing <b>{{searchText}}</b>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="labelList.length == 0" style="margin: 10px auto;">
+        <b>No labels</b><br /> Add labels to group your vehicles
+    </div>
+
+    <div class="clearfix"></div>
+    <input type="button" class="btn btn-default btn-orange btn-big full-width" value="Create Labels" (click)="createLabel()"
+    />
+    <br />
+    <br />
+</div>
+<ng-template #addEditBlock>
+    <form name="form" (ngSubmit)="labelForm.form.valid && saveLabel()" #labelForm="ngForm" novalidate>
+        {{labelId == null ? 'Add Label' : 'Edit Label'}} <b class="pull-right" (click)="displayLabel()">Back</b>
+        <div class="inner-edit-popup">
+            <label class="control-label" [ngClass]="_err.label(labelForm, LabelName)">Label Name <span class="err-label">*</span></label>
+            <input class="form-control" placeholder="Enter label name..." name="LabelName" [(ngModel)]="labelName" #LabelName="ngModel"
+                maxlength="50 " [ngClass]="_err.input(labelForm, LabelName)" required />
+            <label *ngIf="_err.required(labelForm, LabelName)" class="err-label">Please enter Label Name</label>
+            <div class="select-color-main">
+                <span>Select a color</span>
+                <div class="color-palette">
+                    <div *ngFor="let c of colorList" class="pill" [class.active]="labelColorId == c.VehicleColorId" (click)="labelColorId = c.VehicleColorId"
+                        [ngStyle]="{'background-color': c.ColorCode}">
+                        <i class="fa fa-check check" aria-hidden="true"></i>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <input type="submit" class="btn btn-default btn-orange edit-submit" value="Create" />
+            </div>
+        </div>
+    </form>
+</ng-template>

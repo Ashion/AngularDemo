@@ -1,0 +1,55 @@
+<div class="content-wrapper pl0">
+    <div class="top-button-main p15">
+        Alerts
+        <div class="top-button-right pull-right">
+            <div class="top-filter pull-left">
+                <input type="text" placeholder="Search Alerts..." name="searchText" class="form-control k-textbox" [(ngModel)]="filterText"
+                    (keyup)="fileter()" />
+            </div>
+            <button class="btn btn-orange pull-right ml10" kendoButton (click)="router.navigate(['/user/alerts/type'])">+ Create Alert</button>
+        </div>
+    </div>
+    <div class="grid-main p15 full-width">
+        <div class="grid-box full-width">
+            <kendo-grid [data]="kgDataSource | async" [pageSize]="kgPageSize" (pageChange)="pageChange($event)" [skip]="kgSkip" [pageable]="true"
+                [sort]="kgSort" [sortable]="{mode: 'multiple'}" (dataStateChange)="onStateChange($event)" (sortChange)="sortChange($event)">
+
+                <kendo-grid-column field="Name" title="Name" width="190px"></kendo-grid-column>
+                <kendo-grid-column title="Vehicles" width="130px">
+                    <ng-template kendoGridCellTemplate let-dataItem>{{dataItem.Vehicles.length == 0 ? '' :(dataItem.Vehicles.length == 1 ? dataItem.Vehicles[0]: (dataItem.Vehicles[0]
+                        + ' and ' + (dataItem.Vehicles.length-1) + ' other recipients'))}}</ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column title="When" width="130px">
+                    <ng-template kendoGridCellTemplate let-dataItem>{{dataItem.GenerateOnEntry && dataItem.GenerateOnExit ? 'both': (dataItem.GenerateOnEntry ? 'entering'
+                        : 'leaving')}}</ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column field="PlaceName" title="Place" width="190px"></kendo-grid-column>
+                <kendo-grid-column title="On" width="130px">
+                    <ng-template kendoGridCellTemplate let-dataItem>{{dataItem.GenerateOnDays ? (dataItem.GenerateOnDays.split(',').length == 7 ? ' Every day': dataItem.GenerateOnDays)
+                        : ''}}</ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column title="At" width="130px">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{dataItem.FromTime && dataItem.ToTime ? _moment(dataItem.FromTime, 'hh:mm:ss').format('LT') + ' to ' + _moment(dataItem.ToTime,
+                        'hh:mm:ss').format('LT') : 'anytime'}}
+                    </ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column title="At Date" width="130px">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{dataItem.IsTemporary ? ((dataItem.TempStartDate | date:'d/M/y') + ' - ' + (dataItem.TempEndDate | date:'d/M/y')) : 'anytime'}}</ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column title="Email Notify" width="130px">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{dataItem.EmailNotify.length == 0 ? '' :(dataItem.EmailNotify.length == 1 ? dataItem.EmailNotify[0]: (dataItem.EmailNotify[0]
+                        + ' and ' + (dataItem.EmailNotify.length-1) + ' other recipients'))}}</ng-template>
+                </kendo-grid-column>
+                <kendo-grid-column title="SMS Notify" width="130px">
+                    <ng-template kendoGridCellTemplate let-dataItem>
+                        {{dataItem.SMSNotify.length == 0 ? '' :(dataItem.SMSNotify.length == 1 ? dataItem.SMSNotify[0]: (dataItem.SMSNotify[0] +
+                        ' and ' + (dataItem.SMSNotify.length-1) + ' other recipients'))}}</ng-template>
+                </kendo-grid-column>
+
+            </kendo-grid>
+        </div>
+    </div>
+</div>
